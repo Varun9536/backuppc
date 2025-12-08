@@ -1,0 +1,23 @@
+{
+  "users": [
+    {
+      "userid": "backuppcadmin",
+      "password": "admin@123",
+      "host": "",
+      "role": "Admin"
+    },
+    {
+      "userid": "backuppcuser",
+      "password": "user@123",
+      "host": "192.168.1.15",
+      "role": "User"
+    },
+     {
+      "userid": "backuppcuser1",
+      "password": "user1@123",
+      "host": "135.125.191.236",
+      "role": "User"
+    }
+  ]
+}
+
