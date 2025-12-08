@@ -1,0 +1,140 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 32px;
+  background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+  border-radius: 24px;
+  border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.hero h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.subtitle {
+  color: #475569;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: #3b82f6;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.heroBadge {
+  min-width: 180px;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.1);
+}
+
+.heroBadge strong {
+  font-size: 20px;
+  color: #0f172a;
+}
+
+.heroBadge p {
+  font-size: 13px;
+  color: #475569;
+}
+
+.badgeIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.menuCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.menuCard h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.menuCard p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.menuCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 25px 30px rgba(15, 23, 42, 0.12);
+}
+
+.iconBubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: rgba(37, 99, 235, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.arrow {
+  font-size: 24px;
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .menuCard {
+    grid-template-columns: auto 1fr;
+  }
+
+  .arrow {
+    display: none;
+  }
+}
+

@@ -1,0 +1,84 @@
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+.addButton {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #007bff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.addButton:hover {
+  background: #0056b3;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+.editButton {
+  padding: 6px 12px;
+  margin-right: 5px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editButton:hover {
+  background: #0056b3;
+}
+
+.deleteButton {
+  padding: 6px 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.deleteButton:hover {
+  background: #c82333;
+}
+
+.backButton {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 8px 16px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.backButton:hover {
+  background: #5a6268;
+}
+
