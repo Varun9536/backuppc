@@ -30,6 +30,7 @@
 #     PUT  /api/notifications  - Update notification config
 #     POST /api/restore/:hostname/backups/:backupNum/requests
 #     POST /api/login - Verify user
+#     POST /api/get-user-hosts
 #
 # AUTHOR
 #   Generated for BackupPC API integration
@@ -1511,7 +1512,6 @@ sub handle_post_login {
         if ($u->{userid} eq $userid && $u->{password} eq $password) {
             return json_response({
                 status => "success",
-                host   => $u->{host},
                 role   => $u->{role}
             });
         }
@@ -1519,6 +1519,69 @@ sub handle_post_login {
 
     return json_error1("Invalid userid or password", 401);
 }
+
+# POST /api/get-user-hosts
+sub handle_post_get_user_hosts {
+    my ($env) = @_;
+    my $req = Plack::Request->new($env);
+
+    # Read POST JSON
+    my $body  = $req->content;
+    my $input = eval { decode_json($body) };
+    return json_error1("Invalid JSON", 400) if $@;
+
+    my $userid = $input->{userid} || "";
+    return json_error1("userid is required", 400) if $userid eq "";
+
+    # Read users.json
+    my $file = "/home/aagarwalAnubhav/users.json";
+    open my $fh, "<", $file or return json_error1("Cannot open users.json", 500);
+    local $/;
+    my $json_text = <$fh>;
+    close $fh;
+
+    my $data = eval { decode_json($json_text) };
+    return json_error1("Invalid users.json format", 500) if $@;
+
+    my ($role, $hostString);
+    my @hosts = ();
+
+    # Find user record
+    foreach my $u (@{$data->{users}}) {
+        if ($u->{userid} eq $userid) {
+            $role       = $u->{role} // "";
+            $hostString = $u->{host} // "";
+            last;
+        }
+    }
+
+    # -------------------------
+    # ADMIN → RETURN ALL HOSTS
+    # -------------------------
+    if (defined $role && $role eq 'Admin') {
+        # Directly call your GET API method that returns all hosts
+        return handle_get_hosts($env);
+    }
+
+    # -------------------------
+    # NORMAL USER → limited hosts
+    # -------------------------
+    if ($hostString ne "") {
+        @hosts = split /\s*,\s*/, $hostString;
+    }
+
+    my $response = {
+        userid => $userid,
+        hosts  => \@hosts
+    };
+
+    return [
+        200,
+        ["Content-Type" => "application/json"],
+        [encode_json($response)]
+    ];
+}
+
 
 
 # Main PSGI application
@@ -1599,8 +1662,11 @@ sub app {
        $result = handle_post_append_restore_files($env);
    }
    # Login route
-  if ($path eq '/api/login' && $request->method eq 'POST') {
+  elsif ($path eq '/api/login' && $request->method eq 'POST') {
     return handle_post_login($env);
+  }
+  elsif ($path eq '/api/get-user-hosts' && $request->method eq 'POST') {
+     return handle_post_get_user_hosts($env);
   }
     else {
         my $json = JSON->new->utf8->pretty;

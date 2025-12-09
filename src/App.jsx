@@ -13,7 +13,7 @@ import CreateHost from './pages/CreateHost'
 
 function App() {
 
-  let a =  "user"
+
   return (
     <AppProvider>
       <Router>
@@ -24,9 +24,7 @@ function App() {
             <Route path="/hosts" element={<HostsList />} />
             <Route path="/hosts/createHost" element={<CreateHost />} />
             <Route path="/hosts/edit/:hostname" element={<HostEdit />} />
-
-            {a == "admin" ? <Route path="/backups" element={<Backups />} /> : <></> }
-            
+            <Route path="/backups" element={<Backups />} />
             <Route path="/restore" element={<Restore />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/notifications" element={<Notifications />} />

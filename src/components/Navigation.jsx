@@ -33,7 +33,7 @@ const Navigation = () => {
       <div className={layoutStyles.sidebarSectionTitle}>Navigation</div>
       <div className={layoutStyles.sidebarNav}>
 
-{a == "Admin" ? <>{navItems.map(item => {
+{a == "admin" ? <>{navItems.map(item => {
           const isActive =
             item.path === '/'
               ? location.pathname === '/'

@@ -9,7 +9,7 @@
     {
       "userid": "backuppcuser",
       "password": "user@123",
-      "host": "192.168.1.15",
+      "host": "192.168.1.15,135.125.191.236,145.788.78.89",
       "role": "User"
     },
      {
