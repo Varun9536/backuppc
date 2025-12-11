@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { backupsAPI } from '../services/api'
+import { backupsAPI, restoreAPI } from '../services/api'
 import { useApp } from '../context/AppContext'
 import styles from './Backups.module.css'
+import { useSelector } from 'react-redux'
 
 const Backups = () => {
   const navigate = useNavigate()
@@ -10,6 +11,8 @@ const Backups = () => {
   const [backups, setBackups] = useState([])
   const [loading, setLoading] = useState(true)
   const [triggering, setTriggering] = useState({})
+
+  const { role  , userid} = useSelector((state) => state.user)
 
   useEffect(() => {
     if (contextBackups.length > 0) {
@@ -21,10 +24,32 @@ const Backups = () => {
   }, [contextBackups])
 
   const loadBackups = async () => {
+
+   
     try {
       setLoading(true)
-      const data = await backupsAPI.list()
-      setBackups(data)
+      // setBackups([])
+
+      if (role == "Admin") {
+        const data = await backupsAPI.list()
+        setBackups(data)
+      }
+
+      if (role == "User") {
+       
+        const admindata = await backupsAPI.list()
+        const userdata = await restoreAPI.getUserHosts({userid})
+        const matchedObjects = admindata?.filter(host_name =>
+          userdata?.hosts?.includes(host_name.hostname)
+        );
+        setBackups(matchedObjects)
+
+      }
+
+
+
+
+
     } catch (error) {
       console.error('Error loading backups:', error)
       alert('Failed to load backups')
@@ -32,6 +57,8 @@ const Backups = () => {
       setLoading(false)
     }
   }
+
+
 
   const triggerBackup = async (hostname, type) => {
     try {

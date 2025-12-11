@@ -1483,11 +1483,36 @@ EOF
 sub handle_post_login {
     my ($env) = @_;
     my $request = Plack::Request->new($env);
+      # CORS: Preflight OPTIONS request
+    # -------------------------------------------------------
+    if ($request->method eq 'OPTIONS') {
+        my $res = $request->new_response(200);
+        $res->headers->set("Access-Control-Allow-Origin"  => "*");
+        $res->headers->set("Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS");
+        $res->headers->set("Access-Control-Allow-Headers" => "Content-Type");
+        return $res->finalize;
+    }
+
+    # -------------------------------------------------------
+    # Helper: add CORS headers to final JSON PSGI response
+    # -------------------------------------------------------
+    my $add_cors = sub {
+        my ($psgi) = @_;
+        my ($status, $headers, $body) = @$psgi;
+
+        push @$headers,
+            "Access-Control-Allow-Origin"  => "*",
+            "Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers" => "Content-Type";
+
+        return $psgi;
+    };
+
 
     my $json_file = "/home/aagarwalAnubhav/users.json";
 
     # Read file
-    open(my $fh, '<', $json_file) or return json_error1("Cannot open JSON file", 500);
+    open(my $fh, '<', $json_file) or return $add_cors->(json_error1("Cannot open JSON file", 500));
     local $/;
     my $data = <$fh>;
     close($fh);
@@ -1498,50 +1523,74 @@ sub handle_post_login {
     my $body = $request->content;
     my $input;
     eval { $input = decode_json($body); };
-    return json_error1("Invalid JSON input", 400) if $@;
+    return $add_cors->(json_error1("Invalid JSON input", 400)) if $@;
 
     my $userid = $input->{userid};
     my $password = $input->{password};
 
     # Validate missing fields
-    return json_error1("Missing userid or password", 400)
+    return $add_cors->(json_error1("Missing userid or password", 400))
         if (!$userid || !$password);
 
     # Search user
     foreach my $u (@$users) {
         if ($u->{userid} eq $userid && $u->{password} eq $password) {
-            return json_response({
+            return $add_cors->(json_response({
                 status => "success",
-                role   => $u->{role}
-            });
+                role   => $u->{role},
+                user   => $u->{userid}
+            }));
         }
     }
 
-    return json_error1("Invalid userid or password", 401);
+    return $add_cors->(json_error1("Invalid userid or password", 401));
 }
 
 # POST /api/get-user-hosts
 sub handle_post_get_user_hosts {
     my ($env) = @_;
     my $req = Plack::Request->new($env);
+      # CORS: Preflight OPTIONS request
+    # -------------------------------------------------------
+    if ($req->method eq 'OPTIONS') {
+        my $res = $req->new_response(200);
+        $res->headers->set("Access-Control-Allow-Origin"  => "*");
+        $res->headers->set("Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS");
+        $res->headers->set("Access-Control-Allow-Headers" => "Content-Type");
+        return $res->finalize;
+    }
 
+    # -------------------------------------------------------
+    # Helper: add CORS headers to final JSON PSGI response
+    # -------------------------------------------------------
+    my $add_cors = sub {
+        my ($psgi) = @_;
+        my ($status, $headers, $body) = @$psgi;
+
+        push @$headers,
+            "Access-Control-Allow-Origin"  => "*",
+            "Access-Control-Allow-Methods" => "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers" => "Content-Type";
+
+        return $psgi;
+    };
     # Read POST JSON
     my $body  = $req->content;
     my $input = eval { decode_json($body) };
-    return json_error1("Invalid JSON", 400) if $@;
+    return $add_cors->(json_error1("Invalid JSON", 400)) if $@;
 
     my $userid = $input->{userid} || "";
-    return json_error1("userid is required", 400) if $userid eq "";
+    return $add_cors->(json_error1("userid is required", 400)) if $userid eq "";
 
     # Read users.json
     my $file = "/home/aagarwalAnubhav/users.json";
-    open my $fh, "<", $file or return json_error1("Cannot open users.json", 500);
+    open my $fh, "<", $file or return $add_cors->(json_error1("Cannot open users.json", 500));
     local $/;
     my $json_text = <$fh>;
     close $fh;
 
     my $data = eval { decode_json($json_text) };
-    return json_error1("Invalid users.json format", 500) if $@;
+    return $add_cors->(json_error1("Invalid users.json format", 500)) if $@;
 
     my ($role, $hostString);
     my @hosts = ();
@@ -1558,10 +1607,10 @@ sub handle_post_get_user_hosts {
     # -------------------------
     # ADMIN → RETURN ALL HOSTS
     # -------------------------
-    if (defined $role && $role eq 'Admin') {
+    #if (defined $role && $role eq 'Admin') {
         # Directly call your GET API method that returns all hosts
-        return handle_get_hosts($env);
-    }
+       # return handle_get_hosts($env);
+   # }
 
     # -------------------------
     # NORMAL USER → limited hosts
@@ -1570,16 +1619,15 @@ sub handle_post_get_user_hosts {
         @hosts = split /\s*,\s*/, $hostString;
     }
 
-    my $response = {
-        userid => $userid,
-        hosts  => \@hosts
-    };
+    #my $response = {
+      #  userid => $userid,
+      #  hosts  => \@hosts
+  #  };
+     return $add_cors->(json_response({
+                userid => $userid,
+                hosts  => \@hosts
+            }));
 
-    return [
-        200,
-        ["Content-Type" => "application/json"],
-        [encode_json($response)]
-    ];
 }
 
 

@@ -4,10 +4,13 @@ import { hostsAPI } from '../services/api'
 import { useApp } from '../context/AppContext'
 import styles from './HostsList.module.css'
 
+
 const HostsList = () => {
   const navigate = useNavigate()
   const { hosts, loading, refreshHosts } = useApp()
   const [localHosts, setLocalHosts] = useState([])
+
+ 
 
   useEffect(() => {
     if (hosts.length > 0) {
@@ -19,8 +22,8 @@ const HostsList = () => {
 
   const loadHosts = async () => {
     try {
-      const data = await hostsAPI.list()
-      setLocalHosts(data)
+       const data = await hostsAPI.list()
+         setLocalHosts(data)
     } catch (error) {
       console.error('Error loading hosts:', error)
       alert('Failed to load hosts')

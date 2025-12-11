@@ -1,7 +1,22 @@
 import Navigation from './Navigation'
 import styles from './Layout.module.css'
+import { useDispatch } from 'react-redux'
+import { logout } from '../Redux/userSlice'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const Layout = ({ children }) => {
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleLogout = ()=>
+  {
+   
+    dispatch(logout())
+    navigate("/")
+  }
+
+
   return (
     <div className={styles.appShell}>
       <header className={styles.topbar}>
@@ -12,8 +27,12 @@ const Layout = ({ children }) => {
             <span className={styles.brandSub}>Backup Administration</span>
           </div>
         </div>
-        <div className={styles.userBadge}>Admin Console</div>
+         <div onClick={handleLogout} className={styles.userBadge}>Logout</div>
+        {/* <div className={styles.userBadge}>Admin Console</div> */}
       </header>
+
+
+      
 
       <aside className={styles.sidebar}>
         <Navigation />

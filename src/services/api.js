@@ -93,6 +93,10 @@ export const hostsAPI = {
     //   { hostname: 'larson', dhcp: true, user: 'gary' }
     // ]
   },
+
+
+  
+  
   get: async (hostname) => {
 
     try {
@@ -294,6 +298,13 @@ export const restoreAPI_old = {
       throw err;
     }
   },
+
+
+
+
+
+
+
   getBackups: async (hostname) => {
 
     try {
@@ -381,6 +392,31 @@ export const restoreAPI = {
     return await res.json();
   },
 
+
+  getUserHosts: async (payload) => {
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/get-user-hosts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify( payload)
+      });
+      
+
+      if (!res.ok) {
+        throw new Error("Failed to load restore hosts");
+      }
+
+      const data = await res.json();
+
+      console.log(data, "gethosts")
+      return data;
+    } catch (err) {
+      console.error("Error fetching restore hosts:", err);
+      throw err;
+    }
+  },
+
   getBackups: async (hostname) => {
     const res = await fetch(`${BASE_URL}/api/restore/${hostname}/backups`);
     
@@ -401,7 +437,7 @@ export const restoreAPI = {
 
 
   restore: async (hostname, backupNum, files) => {
-    
+
     const res = await fetch(
       `${BASE_URL}/api/restore/${hostname}/backups/${backupNum}/requests`,
       {
@@ -506,6 +542,49 @@ export const reportsAPI = {
       };
     }
   }
+};
+
+
+
+
+
+
+
+
+
+
+export const userApi = {
+
+  login: async (payload) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(
+           payload
+          )
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+
+    } catch (error) {
+      console.error("Error initiating restore:", error);
+      return null;
+    }
+  },
+
+  
+  
 };
 
 

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import styles from './Home.module.css'
+import { useSelector } from 'react-redux'
 
 const Home = () => {
+
+  const {role} = useSelector((state) => state.user);
   const menuItems = [
     {
       path: '/global-config',
@@ -43,7 +46,26 @@ const Home = () => {
 
 
 
- 
+  const userMenuItems = [ 
+    {
+      path: '/backups',
+      label: 'Backups',
+      description: 'Monitor status and trigger full or incremental runs.',
+      icon: '⟳'
+    },
+    {
+      path: '/restore',
+      label: 'Restore',
+      description: 'Browse snapshots and securely recover files.',
+      icon: '⤵'
+    },
+    {
+      path: '/reports',
+      label: 'Reports & Logs',
+      description: 'Audit history, analyze outcomes and spot issues.',
+      icon: '📊'
+    }
+  ]
 
   return (
     <div className={styles.home}>
@@ -66,7 +88,18 @@ const Home = () => {
       </section>
 
       <nav className={styles.menuGrid}>
-        {menuItems.map(item => (
+        {role == "Admin" && menuItems.map(item => (
+          <Link key={item.path} to={item.path} className={styles.menuCard}>
+            <div className={styles.iconBubble}>{item.icon}</div>
+            <div>
+              <h3>{item.label}</h3>
+              <p>{item.description}</p>
+            </div>
+            <span className={styles.arrow}>→</span>
+          </Link>
+        ))}
+
+        {role == "User" && userMenuItems.map(item => (
           <Link key={item.path} to={item.path} className={styles.menuCard}>
             <div className={styles.iconBubble}>{item.icon}</div>
             <div>

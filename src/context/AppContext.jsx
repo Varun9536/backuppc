@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { globalConfigAPI, hostsAPI, backupsAPI } from '../services/api'
+import { globalConfigAPI, hostsAPI, backupsAPI , restoreAPI } from '../services/api'
+
+import { useSelector } from 'react-redux'
 
 const AppContext = createContext()
 
@@ -15,6 +17,7 @@ export const AppProvider = ({ children }) => {
   const [hosts, setHosts] = useState([])
   const [backups, setBackups] = useState([])
   const [loading, setLoading] = useState(false)
+  const { role  , userid} = useSelector((state) => state.user)
 
   useEffect(() => {
     loadHosts()
@@ -35,8 +38,27 @@ export const AppProvider = ({ children }) => {
 
   const loadBackups = async () => {
     try {
-      const data = await backupsAPI.list()
-      setBackups(data)
+      // const data = await backupsAPI.list()
+      // setBackups(data)
+
+
+
+
+      if (role == "Admin") {
+              const data = await backupsAPI.list()
+              setBackups(data)
+            }
+      
+            if (role == "User") {
+             
+              const admindata = await backupsAPI.list()
+              const userdata = await restoreAPI.getUserHosts({userid})
+              const matchedObjects = admindata?.filter(host_name =>
+                userdata?.hosts?.includes(host_name.hostname)
+              );
+              setBackups(matchedObjects)
+      
+            }
     } catch (error) {
       console.error('Error loading backups:', error)
     }

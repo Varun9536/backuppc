@@ -1,8 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 import layoutStyles from './Layout.module.css'
+import { useSelector } from 'react-redux'
 
 const Navigation = () => {
   const location = useLocation()
+
+  const {role} = useSelector((state) => state.user)
 
   const navItems = [
     { path: '/', label: 'Overview', icon: '⌂' },
@@ -14,18 +17,16 @@ const Navigation = () => {
     { path: '/notifications', label: 'Notifications', icon: '✉' }
   ]
 
-  let a = "admin"
+  
 
 
 
-   const userNavItems = [
+  const userNavItems = [
     { path: '/', label: 'Overview', icon: '⌂' },
-   
-   
     { path: '/backups', label: 'My Backups', icon: '⟳' },
     { path: '/restore', label: 'Restore Files', icon: '⤵' },
     { path: '/reports', label: 'Reports', icon: '📊' },
-    
+
   ]
 
   return (
@@ -33,7 +34,7 @@ const Navigation = () => {
       <div className={layoutStyles.sidebarSectionTitle}>Navigation</div>
       <div className={layoutStyles.sidebarNav}>
 
-{a == "admin" ? <>{navItems.map(item => {
+        {role == "Admin" ? <>{navItems.map(item => {
           const isActive =
             item.path === '/'
               ? location.pathname === '/'
@@ -43,9 +44,8 @@ const Navigation = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`${layoutStyles.sidebarLink} ${
-                isActive ? layoutStyles.sidebarLinkActive : ''
-              }`}
+              className={`${layoutStyles.sidebarLink} ${isActive ? layoutStyles.sidebarLinkActive : ''
+                }`}
             >
               <span className={layoutStyles.sidebarLinkIcon}>{item.icon}</span>
               <span className={layoutStyles.sidebarLinkLabel}>{item.label}</span>
@@ -54,33 +54,32 @@ const Navigation = () => {
         })}</> :
 
 
-<>{userNavItems.map(item => {
-          const isActive =
-            item.path === '/'
-              ? location.pathname === '/'
-              : location.pathname.startsWith(item.path)
+          <>{userNavItems.map(item => {
+            const isActive =
+              item.path === '/'
+                ? location.pathname === '/'
+                : location.pathname.startsWith(item.path)
 
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`${layoutStyles.sidebarLink} ${
-                isActive ? layoutStyles.sidebarLinkActive : ''
-              }`}
-            >
-              <span className={layoutStyles.sidebarLinkIcon}>{item.icon}</span>
-              <span className={layoutStyles.sidebarLinkLabel}>{item.label}</span>
-            </Link>
-          )
-        })}</>
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`${layoutStyles.sidebarLink} ${isActive ? layoutStyles.sidebarLinkActive : ''
+                  }`}
+              >
+                <span className={layoutStyles.sidebarLinkIcon}>{item.icon}</span>
+                <span className={layoutStyles.sidebarLinkLabel}>{item.label}</span>
+              </Link>
+            )
+          })}</>
 
-        
-        
-        
-        
+
+
+
+
         }
 
-        
+
 
 
 

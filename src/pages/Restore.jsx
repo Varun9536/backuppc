@@ -294,12 +294,15 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { restoreAPI } from '../services/api'
 import styles from './Restore.module.css'
+import { useSelector } from 'react-redux'
 
 const Restore = () => {
   const navigate = useNavigate()
+  const { userid, role } = useSelector((state) => state.user)
 
   // Hosts / backups
   const [hosts, setHosts] = useState([])
+  // const [hosts, setHosts] = useState([])
   const [selectedHost, setSelectedHost] = useState('')
   const [backups, setBackups] = useState([])
   const [selectedBackup, setSelectedBackup] = useState('')
@@ -328,7 +331,6 @@ const Restore = () => {
     }
 
     const data = await restoreAPI.sendInfo(selectedHost, backup_no, bodydata)
-
     console.log("data restore request", data)
   }
 
@@ -378,10 +380,22 @@ const Restore = () => {
   }
 
   const loadHosts = async () => {
+
+   
     try {
       setLoading(true)
-      const data = await restoreAPI.getHosts()
-      setHosts(data || [])
+      if (role == "User") {
+        const userdata = await restoreAPI.getUserHosts({ userid })
+       
+        console.log(userdata)
+        setHosts(userdata.hosts)
+      }
+
+      if(role == "Admin") {
+        const data = await restoreAPI.getHosts()
+        setHosts(data || [])
+      }
+
     } catch (error) {
       console.error(error)
       alert('Failed to load hosts')
@@ -566,11 +580,24 @@ const Restore = () => {
           }}
         >
           <option disabled value="">Select a host</option>
-          {hosts.map((h) => (
-            <option key={h.hostname} value={h.hostname}>
-              {h.hostname}
-            </option>
-          ))}
+
+
+          {role == "Admin" && (<>
+            {hosts?.map((h) => (
+              <option key={h.hostname} value={h.hostname}>
+                {h.hostname}
+              </option>
+            ))}
+          </>)}
+
+          {role == "User" && (<>
+            {hosts?.map((h) => (
+              <option key={h} value={h}>
+                {h}
+              </option>
+            ))}
+
+          </>)}
         </select>
       </div>
 
