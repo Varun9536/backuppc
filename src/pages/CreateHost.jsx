@@ -59,13 +59,14 @@ const CreateHost = () => {
     try {
     setSaving(true)
      const data = await hostsAPI.save(formData);
-    
-     if(data?.error.length > 1){
+     //console.log(data)
+     if(data?.success == 1){
+      alert(data?.message);
+     }
+     else if(data?.error.length > 1){
       alert(data?.error);
      }
-     else{
-      alert('Host configuration saved successfully!')
-     }
+    
     //   refreshHosts()
     //   navigate('/hosts')
     } catch (error) {
