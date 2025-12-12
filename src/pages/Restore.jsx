@@ -331,7 +331,8 @@ const Restore = () => {
     }
 
     const data = await restoreAPI.sendInfo(selectedHost, backup_no, bodydata)
-    console.log("data restore request", data)
+    //console.log("data restore request", data)
+    alert(`${data.message} Restore ID: ${data.restoreId || ""}`)
   }
 
 
@@ -387,7 +388,7 @@ const Restore = () => {
       if (role == "User") {
         const userdata = await restoreAPI.getUserHosts({ userid })
        
-        console.log(userdata)
+       // console.log(userdata)
         setHosts(userdata.hosts)
       }
 
@@ -522,9 +523,9 @@ const Restore = () => {
       const payload = buildRestorePayload()
       // keep same argument order: host, backup_no, payload
       const res = await restoreAPI.restore(selectedHost, backup_no, payload)
-      console.log("request", res)
+      //console.log("request", res)
       if (res && res?.restoreInfo.length > 1) {
-        // alert(`Restore started! Restore ID: ${res.restoreId || res.id || 'unknown'}`)
+         //alert(`Restore started! Restore ID: ${res.restoreId || res.id || 'unknown'}`)
         // optionally clear selections
         setSelectedFiles([])
         // setrestoreInfo(res.restoreInfo)

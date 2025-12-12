@@ -362,6 +362,7 @@ sub handle_get_host {
 
     # Get host info from hosts file
     my $hosts   = $bpc->HostInfoRead($hostname);
+    
     my $lc_host = lc($hostname);
 
     if ( !defined $hosts->{$lc_host} ) {
@@ -381,7 +382,7 @@ sub handle_get_host {
     if ( !defined $conf || ref($conf) ne 'HASH' ) {
         $conf = {};
     }
-
+    my $smbPass = $hostConfig->{Conf}{SmbSharePasswd} // "";
     # ------------------------------------------------------------------
     # Retention counts – treat everything as simple scalars
     # ------------------------------------------------------------------
@@ -462,6 +463,7 @@ sub handle_get_host {
 
         retentionFull => $fullKeepCnt,
         retentionIncr => $incrKeepCnt,
+        sharePass => $smbPass,
 
         # Note: Backup schedules are in WakeupSchedule, not per-host
         fullBackupSchedule => "0 2 * * 0",    # Default
@@ -906,7 +908,7 @@ sub handle_get_restore_files {
     my $hostname = lc($params{hostname} || "");
     my $backupNum = $params{backupNum} || "";
     
-    if ( !$hostname || !$backupNum ) {
+    if ( !$hostname && !$backupNum ) {
         return json_error(400, "Hostname and backupNum parameters required");
     }
     
@@ -979,7 +981,7 @@ sub handle_post_restore {
     my $hostname = lc($params{hostname} || "");
     my $backupNum = $params{backupNum} || "";
     
-    if ( !$hostname || !$backupNum ) {
+    if ( !$hostname && !$backupNum ) {
         return json_error(400, "Hostname and backupNum parameters required");
     }
     

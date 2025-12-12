@@ -55,7 +55,7 @@ const CreateHost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("formdata " , "create" , formData)
+   // console.log("formdata " , "create" , formData)
     try {
       setSaving(true)
       await hostsAPI.save(formData)
@@ -85,7 +85,7 @@ const CreateHost = () => {
           name="hostname"
           value={formData.hostname}
           onChange={handleChange}
-          placeholder="host.domain.com"
+          placeholder="127.0.0.1"
           required
           disabled={!!hostname}
         />

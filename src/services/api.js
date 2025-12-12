@@ -50,7 +50,7 @@ export const globalConfigAPI = {
       });
 
       const data = await res.json();
-      console.log(data.message);
+     // console.log(data.message);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -122,6 +122,7 @@ export const hostsAPI = {
         incrBackupSchedule: data?.incrBackupSchedule ?? "",
         retentionFull: data?.retentionFull ?? "",
         retentionIncr: data?.retentionIncr ?? "",
+        sharePass: data?.sharePass ?? "",
       };
 
     } catch (error) {
@@ -159,7 +160,7 @@ export const hostsAPI = {
       retentionIncr: 14
     };
 
-    console.log("host", hostData)
+    //console.log("host", hostData)
     // return
 
     try {
@@ -172,7 +173,7 @@ export const hostsAPI = {
       });
 
       const data = await res.json();
-      console.log(data);
+     // console.log(data);
     } catch (err) {
       console.error("Error creating host:", err);
     }
@@ -180,7 +181,8 @@ export const hostsAPI = {
 
 
   update: async (hostname, hostData) => {
-    console.log(hostname, hostData)
+    //console.log("hostupdate" , hostname, hostData)
+    // return
     try {
       const response = await fetch(`${BASE_URL}/api/hosts/${hostname}`, {
         method: "PUT",
@@ -191,7 +193,7 @@ export const hostsAPI = {
       });
 
       const data = await response.json();
-      console.log("Update Response:", data);
+      //console.log("Update Response:", data);
 
       if (data.success) {
         console.log("Host configuration updated successfully");
@@ -219,7 +221,7 @@ export const hostsAPI = {
       });
 
       const data = await response.json();
-      console.log("Delete Response:", data);
+     // console.log("Delete Response:", data);
 
       if (data.success) {
         console.log("Host deleted successfully");
@@ -291,7 +293,7 @@ export const restoreAPI_old = {
 
       const data = await res.json();
 
-      console.log(data, "gethosts")
+      //console.log(data, "gethosts")
       return data;
     } catch (err) {
       console.error("Error fetching restore hosts:", err);
@@ -318,7 +320,7 @@ export const restoreAPI_old = {
       const data = await res.json();
 
 
-      console.log("get backups", data)
+      //console.log("get backups", data)
       return data;
     } catch (error) {
       console.error("Error fetching host backups:", error);
@@ -370,7 +372,7 @@ export const restoreAPI_old = {
         throw new Error(`HTTP Error: ${response.status}`);
       }
       const data = await response.json();
-      console.log("restore ", data)
+      //console.log("restore ", data)
       return data;
 
     } catch (error) {
@@ -409,7 +411,7 @@ export const restoreAPI = {
 
       const data = await res.json();
 
-      console.log(data, "gethosts")
+      //console.log(data, "gethosts")
       return data;
     } catch (err) {
       console.error("Error fetching restore hosts:", err);
@@ -483,7 +485,7 @@ export const reportsAPI = {
       }
 
       const data = await response.json();
-      console.log("get log types", data)
+      //console.log("get log types", data)
 
       return data;
 
@@ -507,7 +509,7 @@ export const reportsAPI = {
       }
 
       const data = await response.json();
-      console.log("get log dates", data)
+      //console.log("get log dates", data)
 
       return data;
 
@@ -529,7 +531,7 @@ export const reportsAPI = {
       }
 
       const data = await response.json();
-      console.log("get log ", data)
+      //console.log("get log ", data)
 
       return data;
 
@@ -636,7 +638,7 @@ export const notificationsAPI = {
 
       const data = await response.json();
 
-      console.log("get notification", data)
+      //console.log("get notification", data)
       return data;
 
     } catch (error) {
@@ -664,7 +666,7 @@ export const notificationsAPI = {
       }
 
       const data = await response.json();
-      console.log("save notification", data)
+      //console.log("save notification", data)
       return data;
 
     } catch (error) {

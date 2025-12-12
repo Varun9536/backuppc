@@ -12,13 +12,17 @@ const HostsList = () => {
 
  
 
-  useEffect(() => {
-    if (hosts.length > 0) {
-      setLocalHosts(hosts)
-    } else {
-      loadHosts()
-    }
-  }, [hosts])
+  // useEffect(() => {
+  //   if (hosts.length > 0) {
+  //     setLocalHosts(hosts)
+  //   } else {
+  //     loadHosts()
+  //   }
+  // }, [hosts])
+
+  useEffect(()=>{
+    loadHosts()
+  },[])
 
   const loadHosts = async () => {
     try {

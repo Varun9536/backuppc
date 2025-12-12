@@ -26,11 +26,11 @@ const HostEdit = () => {
 
   const [formData, setFormData] = useState()
 
-  const[serverHostanme , setServerHostName] = useState()
+  const [serverHostanme, setServerHostName] = useState()
 
   useEffect(() => {
     if (hostname) {
-      
+
       loadHost()
     }
   }, [hostname])
@@ -39,12 +39,11 @@ const HostEdit = () => {
     try {
       setLoading(true)
       const data = await hostsAPI.get(hostname)
-     
 
-      console.log(data , "get edit data")
+
+      //console.log(data , "get edit data")
       setFormData(data)
 
-     
     } catch (error) {
       console.error('Error loading host:', error)
       alert('Failed to load host configuration')
@@ -54,7 +53,7 @@ const HostEdit = () => {
   }
 
   const handleChange = (e) => {
-    console.log(e.target.value)
+    //console.log(e.target.value)
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -67,15 +66,11 @@ const HostEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-
-    console.log("formdata" ,formData)
-    
-   
     const hostname = e?.target?.hostname?.value
     if (hostname.length > 1) {
       try {
         setSaving(true)
-        await hostsAPI.update(hostname , formData)
+        await hostsAPI.update(hostname, formData)
         alert('Host configuration saved successfully!')
         refreshHosts()
         navigate('/hosts')
@@ -106,10 +101,23 @@ const HostEdit = () => {
           name="hostname"
           value={formData.hostname}
           onChange={handleChange}
-          placeholder="host.domain.com"
+          placeholder="127.0.0.1"
           required
           disabled={!!hostname}
         />
+
+        <label htmlFor="xferMethod">Transfer Method:</label>
+        <select
+          id="xferMethod"
+          name="xferMethod"
+          value={formData.xferMethod}
+          onChange={handleChange}
+        >
+          <option value="rsync">rsync</option>
+          <option value="smb">SMB/CIFS</option>
+          <option value="tar">tar</option>
+          <option value="ftp">FTP</option>
+        </select>
 
         <label htmlFor="dhcpFlag">DHCP Flag (Is host DHCP?):</label>
         <select
@@ -131,6 +139,19 @@ const HostEdit = () => {
           onChange={handleChange}
           placeholder="username"
         />
+        {formData.xferMethod !== "rsync" && (
+          <>
+            <label htmlFor="sharePass">SmbSharePassword:</label>
+            <input
+              type="password"
+              id="sharePass"
+              name="sharePass"
+              value={formData.sharePass || "123456789"}
+              onChange={handleChange}
+              placeholder=""
+            />
+          </>
+        )}
 
         <label htmlFor="moreUsers">Additional Users (comma separated):</label>
         <input
@@ -142,18 +163,6 @@ const HostEdit = () => {
           placeholder="user1,user2"
         />
 
-        {/* <label htmlFor="xferMethod">Transfer Method:</label>
-        <select
-          id="xferMethod"
-          name="xferMethod"
-          value={formData.xferMethod}
-          onChange={handleChange}
-        >
-          <option value="rsync">rsync</option>
-          <option value="smb">SMB/CIFS</option>
-          <option value="tar">tar</option>
-          <option value="ftp">FTP</option>
-        </select> */}
 
         {/* <label htmlFor="clientCharset">Client Charset (for Windows clients):</label>
         <input
@@ -163,9 +172,9 @@ const HostEdit = () => {
           value={formData.clientCharset}
           onChange={handleChange}
           placeholder="cp1252"
-        />
+        /> */}
 
-        <label htmlFor="smbShare">SMB Share Name (if using SMB):</label>
+        {/* <label htmlFor="smbShare">SMB Share Name (if using SMB):</label>
         <input
           type="text"
           id="smbShare"
@@ -173,9 +182,9 @@ const HostEdit = () => {
           value={formData.smbShare}
           onChange={handleChange}
           placeholder="C$"
-        /> */}
+        />  */}
 
-        {/* <label htmlFor="fullBackupSchedule">Full Backup Schedule (Cron Syntax):</label>
+        <label htmlFor="fullBackupSchedule">Full Backup Schedule (Cron Syntax):</label>
         <input
           type="text"
           id="fullBackupSchedule"
@@ -193,7 +202,7 @@ const HostEdit = () => {
           value={formData.incrBackupSchedule}
           onChange={handleChange}
           placeholder="0 2 * * 1-6 (Mon-Sat 2AM)"
-        /> */}
+        />
 
         {/* <label htmlFor="retentionFull">Full Backup Retention (Days):</label>
         <input
@@ -215,7 +224,7 @@ const HostEdit = () => {
           onChange={handleChange}
           min="1"
           required
-        /> */}
+        />  */}
 
         <button type="submit" disabled={saving}>
           {saving ? 'Updating...' : 'Update Host Configuration'}

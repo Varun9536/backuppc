@@ -37,7 +37,7 @@ function Login() {
 
     if (!validate()) return;
 
-    console.log(password , userid)
+   // console.log(password , userid)
 
     const payload = {
         userid ,
@@ -55,7 +55,7 @@ function Login() {
     // };
 
     const data =  await userApi.login(payload)
-    console.log(data)
+   // console.log(data)
 
     if(data?.status == "success")
     {
@@ -70,6 +70,8 @@ function Login() {
         }))
 
         navigate("/home")
+    }else{
+        alert("Invalid userid or password");
     }
 
     // dispatch(setLoginData(userData));

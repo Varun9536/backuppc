@@ -7,21 +7,26 @@ import { useSelector } from 'react-redux'
 
 const Backups = () => {
   const navigate = useNavigate()
-  const { backups: contextBackups, refreshBackups } = useApp()
+  // const { backups: contextBackups, refreshBackups } = useApp()
   const [backups, setBackups] = useState([])
   const [loading, setLoading] = useState(true)
   const [triggering, setTriggering] = useState({})
 
   const { role  , userid} = useSelector((state) => state.user)
 
-  useEffect(() => {
-    if (contextBackups.length > 0) {
-      setBackups(contextBackups)
-      setLoading(false)
-    } else {
-      loadBackups()
-    }
-  }, [contextBackups])
+  // useEffect(() => {
+  //   if (contextBackups.length > 0) {
+  //     setBackups(contextBackups)
+  //     setLoading(false)
+  //   } else {
+  //     loadBackups()
+  //   }
+  // }, [contextBackups])
+
+  useEffect(()=>
+  {
+    loadBackups()
+  } , [])
 
   const loadBackups = async () => {
 
@@ -68,8 +73,8 @@ const Backups = () => {
       refreshBackups()
       loadBackups()
     } catch (error) {
-      console.error('Error triggering backup:', error)
-      alert('Failed to trigger backup')
+     // console.error('Error triggering backup:', error)
+      //alert('Failed to trigger backup')
     } finally {
       setTriggering(prev => ({ ...prev, [`${hostname}_${type}`]: false }))
     }

@@ -65,7 +65,7 @@ const Reports = () => {
         .replace(/-/g, "-");
 
       const content = await reportsAPI.getLog(logType, tomorrow)
-      console.log("logcontent", logContent)
+    //  console.log("logcontent", logContent)
       setLogContent(content)
     } catch (error) {
       console.error('Error loading log:', error)

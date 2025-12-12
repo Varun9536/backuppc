@@ -3,16 +3,20 @@ import styles from './Layout.module.css'
 import { useDispatch } from 'react-redux'
 import { logout } from '../Redux/userSlice'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { useApp } from '../context/AppContext'
 
 const Layout = ({ children }) => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const {clearstate} = useApp()
+
   const handleLogout = ()=>
   {
    
     dispatch(logout())
+    clearstate()
     navigate("/")
   }
 
