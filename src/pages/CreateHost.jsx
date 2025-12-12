@@ -57,9 +57,15 @@ const CreateHost = () => {
     e.preventDefault()
    // console.log("formdata " , "create" , formData)
     try {
-      setSaving(true)
-      await hostsAPI.save(formData)
+    setSaving(true)
+     const data = await hostsAPI.save(formData);
+    
+     if(data?.error.length > 1){
+      alert(data?.error);
+     }
+     else{
       alert('Host configuration saved successfully!')
+     }
     //   refreshHosts()
     //   navigate('/hosts')
     } catch (error) {

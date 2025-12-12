@@ -2,7 +2,7 @@
 // Replace these with actual API calls to your Perl backend
 
 // Simulate API delay
-const BASE_URL = 'http://localhost:8081';
+const BASE_URL = 'http://192.168.1.37:8081';
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms))
 
 // Global Configuration API
@@ -173,6 +173,7 @@ export const hostsAPI = {
       });
 
       const data = await res.json();
+       return data;
      // console.log(data);
     } catch (err) {
       console.error("Error creating host:", err);
