@@ -459,15 +459,15 @@ sub handle_get_host {
                       // $conf->{ClientCharset}
                       // "",
 
-        smbShare      => $smbShare,
+        smbShare      => "/",
 
         retentionFull => $fullKeepCnt,
         retentionIncr => $incrKeepCnt,
-        sharePass => $smbPass,
+        smbPasswd => $smbPass,
 
         # Note: Backup schedules are in WakeupSchedule, not per-host
-        fullBackupSchedule => "0 2 * * 0",    # Default
-        incrBackupSchedule => "0 2 * * 1-6",  # Default
+        fullBackupPeriod => "6.97",    # Default
+        incrBackupPeriod => "0.97",  # Default
     };
 
     return json_success($response);
@@ -567,106 +567,126 @@ sub handle_post_hosts {
 }
 
 # PUT /api/hosts/:hostname - Update host
+
 sub handle_put_host {
     my $env = shift;
     my $request = Plack::Request->new($env);
     my $path = $request->path_info;
-    
+
     init_backuppc();
-    
+
     my $user = get_user($env);
-    
+
     my %params = extract_path_params($path, '/api/hosts/:hostname');
     my $hostname = lc($params{hostname} || "");
-    
+
     if ( !$hostname ) {
         return json_error(400, "Hostname parameter required");
     }
-    
-    # Check admin permission
+
+    # Admin check
     if ( !check_admin_permission($user) ) {
         return json_error(403, "Access denied. Admin privileges required.");
     }
-    
-    # Check if host exists
+
+    # Host exists check
     my $hosts = $bpc->HostInfoRead();
     if ( !defined($hosts->{$hostname}) ) {
         return json_error(404, "Host not found: $hostname");
     }
-    
-    # Read request body
+
+    # Read body
     my $body = $request->content;
     if ( !$body ) {
         return json_error(400, "Request body is required");
     }
-    
+
     # Parse JSON
     my $json = JSON->new->utf8;
     my $data;
-    eval {
-        $data = $json->decode($body);
-    };
+    eval { $data = $json->decode($body); };
     if ( $@ ) {
         return json_error(400, "Invalid JSON: $@");
     }
-    
-    # Update hosts file
+# ------------------ Update Host Info ------------------
     if ( defined($data->{dhcpFlag}) || defined($data->{user}) || defined($data->{moreUsers}) ) {
-        $hosts->{$hostname}{dhcp} = ($data->{dhcpFlag} || $hosts->{$hostname}{dhcp} || "0") eq "1" ? 1 : 0;
-        $hosts->{$hostname}{user} = $data->{user} if ( defined($data->{user}) );
-        $hosts->{$hostname}{moreUsers} = $data->{moreUsers} if ( defined($data->{moreUsers}) );
-        
+        # DHCP
+        $hosts->{$hostname}{dhcp} = ($data->{dhcpFlag} || "0") eq "1" ? 1 : 0;
+
+        # User
+        $hosts->{$hostname}{user} = $data->{user} if defined($data->{user});
+
+
         my $writeErr = $bpc->HostInfoWrite($hosts);
-        if ( defined($writeErr) ) {
-            return json_error(500, "Failed to update hosts file: $writeErr");
-        }
+        return json_error(500, "Failed to update hosts file: $writeErr") if defined($writeErr);
     }
-    
-    # Update per-host config
+
+    ############################
+    # Read existing host config
+    ############################
     my ($readErr, $hostConfig) = $bpc->ConfigDataRead($hostname);
-    $hostConfig = {} if ( defined($readErr) );
-    
+    $hostConfig = {} if defined $readErr;
+
     my $configChanged = 0;
-    if ( defined($data->{xferMethod}) ) {
-        $hostConfig->{XferMethod} = $data->{xferMethod};
-        $configChanged = 1;
+
+
+# SMB Share Name
+if ( defined($data->{smbShare}) ) {
+    $hostConfig->{SmbShareName} = $data->{smbShare};
+    $configChanged = 1;
+}
+
+# SMB Username
+if ( defined($data->{smbUserName}) ) {
+    $hostConfig->{SmbShareUserName} = $data->{smbUserName};
+    $configChanged = 1;
+}
+
+# SMB Password
+if ( defined($data->{smbPasswd}) ) {
+    $hostConfig->{SmbSharePasswd} = $data->{smbPasswd};
+    $configChanged = 1;
+}
+# Full backup period (days)
+if ( defined($data->{fullBackupPeriod}) ) {
+    $hostConfig->{FullPeriod} = $data->{fullBackupPeriod} + 0;
+    $configChanged = 1;
+}
+
+# Incremental backup period (days)
+if ( defined($data->{incrBackupPeriod}) ) {
+    $hostConfig->{IncrPeriod} = $data->{incrBackupPeriod} + 0;
+    $configChanged = 1;
+}
+
+
+    ############################
+    # Save config
+    ############################
+    if ( !$configChanged ) {
+        return json_error(400, "No SMB fields provided to update");
     }
-    if ( defined($data->{retentionFull}) ) {
-        $hostConfig->{ClientFullKeepCnt} = {} if ( ref($hostConfig->{ClientFullKeepCnt}) ne "HASH" );
-        $hostConfig->{ClientFullKeepCnt}->{$hostname} = $data->{retentionFull};
-        $configChanged = 1;
+
+    my $configErr = $bpc->ConfigDataWrite($hostname, $hostConfig);
+    if ( defined($configErr) ) {
+        return json_error(500, "Failed to update SMB config: $configErr");
     }
-    if ( defined($data->{retentionIncr}) ) {
-        $hostConfig->{ClientIncrKeepCnt} = {} if ( ref($hostConfig->{ClientIncrKeepCnt}) ne "HASH" );
-        $hostConfig->{ClientIncrKeepCnt}->{$hostname} = $data->{retentionIncr};
-        $configChanged = 1;
-    }
-    if ( defined($data->{clientCharset}) ) {
-        $hostConfig->{ClientCharset} = {} if ( ref($hostConfig->{ClientCharset}) ne "HASH" );
-        $hostConfig->{ClientCharset}->{$hostname} = $data->{clientCharset};
-        $configChanged = 1;
-    }
-    if ( defined($data->{smbShare}) ) {
-        $hostConfig->{ClientSmbShareName} = {} if ( ref($hostConfig->{ClientSmbShareName}) ne "HASH" );
-        $hostConfig->{ClientSmbShareName}->{$hostname} = $data->{smbShare};
-        $configChanged = 1;
-    }
-    
-    if ( $configChanged ) {
-        my $configErr = $bpc->ConfigDataWrite($hostname, $hostConfig);
-        if ( defined($configErr) ) {
-            return json_error(500, "Failed to update host config: $configErr");
-        }
-    }
-    
-    # Reload server
+
+    ############################
+    # Reload BackupPC
+    ############################
     server_connect();
     if ( $bpc->ServerOK() ) {
         $bpc->ServerMesg("server reload");
     }
-    
-    return json_success({ success => 1, message => "Host configuration updated successfully" });
+
+    return json_success({
+        success => 1,
+        message => "SMB share override configuration saved successfully"
+    });
 }
+
+
 
 # DELETE /api/hosts/:hostname - Delete host
 sub handle_delete_host {
