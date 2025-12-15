@@ -91,151 +91,128 @@ const HostEdit = () => {
   }
 
   return (
-    <div className={styles.container}>
-      <h1>Host Configuration</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <label htmlFor="hostName">Hostname:</label>
-        <input
-          type="text"
-          id="hostName"
-          name="hostname"
-          value={formData.hostname}
-          onChange={handleChange}
-          placeholder="127.0.0.1"
-          required
-          disabled={!!hostname}
-        />
+  <div className={styles.container}>
+    <h1>Host Configuration</h1>
 
-        <label htmlFor="xferMethod">Transfer Method:</label>
-        <select
-          id="xferMethod"
-          name="xferMethod"
-          value={formData.xferMethod}
-          onChange={handleChange}
-        >
-          <option value="rsync">rsync</option>
-          <option value="smb">SMB/CIFS</option>
-          <option value="tar">tar</option>
-          <option value="ftp">FTP</option>
-        </select>
+    <form onSubmit={handleSubmit} className={styles.form}>
 
-        <label htmlFor="dhcpFlag">DHCP Flag (Is host DHCP?):</label>
-        <select
-          id="dhcpFlag"
-          name="dhcpFlag"
-          value={formData.dhcpFlag}
-          onChange={handleChange}
-        >
-          <option value="0">No</option>
-          <option value="1">Yes</option>
-        </select>
+      {/* Hostname */}
+      <label htmlFor="hostName">Hostname:</label>
+      <input
+        type="text"
+        id="hostName"
+        name="hostname"
+        value={formData.hostname}
+        onChange={handleChange}
+        placeholder="192.168.1.42"
+        required
+        disabled={!!hostname}
+      />
 
-        <label htmlFor="user">User (Owner of Host):</label>
-        <input
-          type="text"
-          id="user"
-          name="user"
-          value={formData.user}
-          onChange={handleChange}
-          placeholder="username"
-        />
-        {formData.xferMethod !== "rsync" && (
-          <>
-            <label htmlFor="sharePass">SmbSharePassword:</label>
-            <input
-              type="password"
-              id="sharePass"
-              name="sharePass"
-              value={formData.sharePass || "123456789"}
-              onChange={handleChange}
-              placeholder=""
-            />
-          </>
-        )}
+      {/* DHCP Flag */}
+      <label htmlFor="dhcpFlag">DHCP:</label>
+      <select
+        id="dhcpFlag"
+        name="dhcpFlag"
+        value={formData.dhcpFlag || "0"}
+        onChange={handleChange}
+      >
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
 
-        <label htmlFor="moreUsers">Additional Users (comma separated):</label>
-        <input
-          type="text"
-          id="moreUsers"
-          name="moreUsers"
-          value={formData.moreUsers}
-          onChange={handleChange}
-          placeholder="user1,user2"
-        />
+      {/* Transfer Method */}
+      <label htmlFor="xferMethod">Transfer Method:</label>
+      <select
+        id="xferMethod"
+        name="xferMethod"
+        value={formData.xferMethod}
+        onChange={handleChange}
+      >
+        <option value="rsync">rsync</option>
+        <option value="smb">SMB / CIFS</option>
+        <option value="tar">tar</option>
+        <option value="ftp">FTP</option>
+      </select>
 
+      {/* Host Owner */}
+      <label htmlFor="user">User (Host Owner):</label>
+      <input
+        type="text"
+        id="user"
+        name="user"
+        value={formData.user || ""}
+        onChange={handleChange}
+        placeholder="backupuser"
+      />
 
-        {/* <label htmlFor="clientCharset">Client Charset (for Windows clients):</label>
-        <input
-          type="text"
-          id="clientCharset"
-          name="clientCharset"
-          value={formData.clientCharset}
-          onChange={handleChange}
-          placeholder="cp1252"
-        /> */}
+      {/* Backup Periods */}
+      <label htmlFor="fullBackupPeriod">Full Backup Schedule:</label>
+      <input
+        type="number"
+        id="fullBackupPeriod"
+        name="fullBackupPeriod"
+        value={formData.fullBackupPeriod || ""}
+        onChange={handleChange}
+      />
 
-        {/* <label htmlFor="smbShare">SMB Share Name (if using SMB):</label>
-        <input
-          type="text"
-          id="smbShare"
-          name="smbShare"
-          value={formData.smbShare}
-          onChange={handleChange}
-          placeholder="C$"
-        />  */}
+      <label htmlFor="incrBackupPeriod">Incremental Backup Schedule:</label>
+      <input
+        type="number"
+        id="incrBackupPeriod"
+        name="incrBackupPeriod"
+        value={formData.incrBackupPeriod || ""}
+        onChange={handleChange}
+      />
 
-        <label htmlFor="fullBackupSchedule">Full Backup Schedule (Cron Syntax):</label>
-        <input
-          type="text"
-          id="fullBackupSchedule"
-          name="fullBackupSchedule"
-          value={formData.fullBackupSchedule}
-          onChange={handleChange}
-          placeholder="0 2 * * 0 (Every Sunday 2AM)"
-        />
+      {/* SMB Overrides */}
+      {formData.xferMethod === "smb" && (
+        <>
+          <label htmlFor="smbShare">SMB Share Name:</label>
+          <input
+            type="text"
+            id="smbShare"
+            name="smbShare"
+            value={formData.smbShare || ""}//{formData.smbShare?.[formData.hostname] || ""}
+            onChange={handleChange}
+            placeholder="shared_folder"
+            required
+          />
 
-        <label htmlFor="incrBackupSchedule">Incremental Backup Schedule (Cron Syntax):</label>
-        <input
-          type="text"
-          id="incrBackupSchedule"
-          name="incrBackupSchedule"
-          value={formData.incrBackupSchedule}
-          onChange={handleChange}
-          placeholder="0 2 * * 1-6 (Mon-Sat 2AM)"
-        />
+          <label htmlFor="smbUserName">SMB Username:</label>
+          <input
+            type="text"
+            id="smbUserName"
+            name="smbUserName"
+            value={formData.smbUserName || ""}
+            onChange={handleChange}
+            placeholder="backupuser"
+          />
 
-        {/* <label htmlFor="retentionFull">Full Backup Retention (Days):</label>
-        <input
-          type="number"
-          id="retentionFull"
-          name="retentionFull"
-          value={formData.retentionFull}
-          onChange={handleChange}
-          min="1"
-          required
-        />
+          <label htmlFor="smbPasswd">SMB Password:</label>
+          <input
+            type="password"
+            id="smbPasswd"
+            name="smbPasswd"
+            value={formData.smbPasswd || ""}
+            onChange={handleChange}
+            placeholder="********"
+          />
+        </>
+      )}
 
-        <label htmlFor="retentionIncr">Incremental Backup Retention (Days):</label>
-        <input
-          type="number"
-          id="retentionIncr"
-          name="retentionIncr"
-          value={formData.retentionIncr}
-          onChange={handleChange}
-          min="1"
-          required
-        />  */}
-
-        <button type="submit" disabled={saving}>
-          {saving ? 'Updating...' : 'Update Host Configuration'}
-        </button>
-      </form>
-
-      <button onClick={() => navigate('/hosts')} className={styles.backButton}>
-        ← Back to Hosts List
+      <button type="submit" disabled={saving}>
+        {saving ? "Saving..." : "Save Host Configuration"}
       </button>
-    </div>
-  )
+    </form>
+
+    <button onClick={() => navigate("/hosts")} className={styles.backButton}>
+      ← Back to Hosts List
+    </button>
+  </div>
+);
+
+
 }
 
 export default HostEdit

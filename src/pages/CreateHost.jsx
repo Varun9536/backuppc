@@ -14,12 +14,11 @@ const CreateHost = () => {
     hostname: '',
     dhcpFlag: '0',
     user: '',
-    moreUsers: '',
     xferMethod: 'rsync',
     clientCharset: 'cp1252',
     smbShare: 'C$',
-    fullBackupSchedule: '0 2 * * 0',
-    incrBackupSchedule: '0 2 * * 1-6',
+    fullBackupSchedule: '6.97',
+    incrBackupSchedule: '0.97',
     retentionFull: 30,
     retentionIncr: 14
   })
@@ -118,7 +117,7 @@ const CreateHost = () => {
           placeholder="username"
         />
 
-        <label htmlFor="moreUsers">Additional Users (comma separated):</label>
+        {/* <label htmlFor="moreUsers">Additional Users (comma separated):</label>
         <input
           type="text"
           id="moreUsers"
@@ -126,7 +125,7 @@ const CreateHost = () => {
           value={formData.moreUsers}
           onChange={handleChange}
           placeholder="user1,user2"
-        />
+        /> */}
 
         <label htmlFor="xferMethod">Transfer Method:</label>
         <select
@@ -161,7 +160,7 @@ const CreateHost = () => {
           placeholder="C$"
         />
 
-        <label htmlFor="fullBackupSchedule">Full Backup Schedule (Cron Syntax):</label>
+        <label htmlFor="fullBackupSchedule">Full Backup Schedule:</label>
         <input
           type="text"
           id="fullBackupSchedule"
@@ -171,7 +170,7 @@ const CreateHost = () => {
           placeholder="0 2 * * 0 (Every Sunday 2AM)"
         />
 
-        <label htmlFor="incrBackupSchedule">Incremental Backup Schedule (Cron Syntax):</label>
+        <label htmlFor="incrBackupSchedule">Incremental Backup Schedule:</label>
         <input
           type="text"
           id="incrBackupSchedule"

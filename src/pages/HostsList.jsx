@@ -87,7 +87,7 @@ const HostsList = () => {
               localHosts.map(host => (
                 <tr key={host.hostname}>
                   <td>{host.hostname}</td>
-                  <td>{host.dhcp ? 'Yes' : 'No'}</td>
+                  <td>{host.dhcpFlag == "1" ? 'Yes' : 'No'}</td>
                   <td>{host.user || '-'}</td>
                   <td>
                     <button
