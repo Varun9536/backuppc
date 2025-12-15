@@ -141,7 +141,7 @@
 
 .main {
   grid-area: main;
-  padding: 20px 28px 32px;
+  padding: 20px 32px;
   overflow-y: auto;
   background: #f4f6fb;
 }

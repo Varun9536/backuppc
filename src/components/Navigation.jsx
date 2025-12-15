@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import layoutStyles from './Layout.module.css'
 import { useSelector } from 'react-redux'
+import { userRoles } from '../services/role'
 
 const Navigation = () => {
   const location = useLocation()
@@ -34,7 +35,7 @@ const Navigation = () => {
       <div className={layoutStyles.sidebarSectionTitle}>Navigation</div>
       <div className={layoutStyles.sidebarNav}>
 
-        {role == "Admin" ? <>{navItems.map(item => {
+        {role == userRoles.level2 ? <>{navItems.map(item => {
           const isActive =
             item.path === '/'
               ? location.pathname === '/'

@@ -4,6 +4,7 @@ import { backupsAPI, restoreAPI } from '../services/api'
 import { useApp } from '../context/AppContext'
 import styles from './Backups.module.css'
 import { useSelector } from 'react-redux'
+import { userRoles } from '../services/role'
 
 const Backups = () => {
   const navigate = useNavigate()
@@ -35,12 +36,12 @@ const Backups = () => {
       setLoading(true)
       // setBackups([])
 
-      if (role == "Admin") {
+      if (role ==  userRoles.level2) {
         const data = await backupsAPI.list()
         setBackups(data)
       }
 
-      if (role == "User") {
+      if (role == userRoles.level1) {
        
         const admindata = await backupsAPI.list()
         const userdata = await restoreAPI.getUserHosts({userid})

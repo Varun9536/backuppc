@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { globalConfigAPI, hostsAPI, backupsAPI, restoreAPI } from '../services/api'
 
 import { useSelector } from 'react-redux'
+import { userRoles } from '../services/role'
 
 const AppContext = createContext()
 
@@ -44,12 +45,12 @@ export const AppProvider = ({ children }) => {
 
 
 
-      if (role == "Admin") {
+      if (role == userRoles.level2) {
         const data = await backupsAPI.list()
         setBackups(data)
       }
 
-      if (role == "User") {
+      if (role == userRoles.level1) {
 
         const admindata = await backupsAPI.list()
         const userdata = await restoreAPI.getUserHosts({ userid })

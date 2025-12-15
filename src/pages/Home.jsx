@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import styles from './Home.module.css'
 import { useSelector } from 'react-redux'
+import { userRoles } from '../services/role';
 
 const Home = () => {
 
@@ -88,7 +89,7 @@ const Home = () => {
       </section>
 
       <nav className={styles.menuGrid}>
-        {role == "Admin" && menuItems.map(item => (
+        {role ==  userRoles.level2 && menuItems.map(item => (
           <Link key={item.path} to={item.path} className={styles.menuCard}>
             <div className={styles.iconBubble}>{item.icon}</div>
             <div>
@@ -99,7 +100,7 @@ const Home = () => {
           </Link>
         ))}
 
-        {role == "User" && userMenuItems.map(item => (
+        {role == userRoles.level1 && userMenuItems.map(item => (
           <Link key={item.path} to={item.path} className={styles.menuCard}>
             <div className={styles.iconBubble}>{item.icon}</div>
             <div>

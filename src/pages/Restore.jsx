@@ -295,6 +295,7 @@ import { useNavigate } from 'react-router-dom'
 import { restoreAPI } from '../services/api'
 import styles from './Restore.module.css'
 import { useSelector } from 'react-redux'
+import { userRoles } from '../services/role'
 
 const Restore = () => {
   const navigate = useNavigate()
@@ -385,14 +386,14 @@ const Restore = () => {
    
     try {
       setLoading(true)
-      if (role == "User") {
+      if (role == userRoles.level1) {
         const userdata = await restoreAPI.getUserHosts({ userid })
        
        // console.log(userdata)
         setHosts(userdata.hosts)
       }
 
-      if(role == "Admin") {
+      if(role == userRoles.level2) {
         const data = await restoreAPI.getHosts()
         setHosts(data || [])
       }
@@ -583,7 +584,7 @@ const Restore = () => {
           <option disabled value="">Select a host</option>
 
 
-          {role == "Admin" && (<>
+          {role == userRoles.level2 && (<>
             {hosts?.map((h) => (
               <option key={h.hostname} value={h.hostname}>
                 {h.hostname}
@@ -591,7 +592,7 @@ const Restore = () => {
             ))}
           </>)}
 
-          {role == "User" && (<>
+          {role == userRoles.level1 && (<>
             {hosts?.map((h) => (
               <option key={h} value={h}>
                 {h}
