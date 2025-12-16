@@ -441,6 +441,26 @@ sub handle_get_host {
     } else {
         $moreUsers = $hostInfo->{moreUsers} || "";
     }
+     # Resolve effective backup periods (host override -> global)
+    my $fullBackupPeriod =
+       (defined $hostConfig->{Conf}{fullBackupPeriod}
+            && $hostConfig->{Conf}{fullBackupPeriod} ne '')
+            ? $hostConfig->{Conf}{fullBackupPeriod}
+            : (defined $conf->{fullBackupPeriod}
+                    && $conf->{fullBackupPeriod} ne '')
+                    ? $conf->{fullBackupPeriod}
+                    : 6.97;
+
+  my $incrBackupPeriod =
+       (defined $hostConfig->{Conf}{incrBackupPeriod}
+            && $hostConfig->{Conf}{incrBackupPeriod} ne '')
+            ? $hostConfig->{Conf}{incrBackupPeriod}
+            : (defined $conf->{incrBackupPeriod}
+                    && $conf->{incrBackupPeriod} ne '')
+                    ? $conf->{incrBackupPeriod}
+                    : 0.97;
+
+
 
     # ------------------------------------------------------------------
     # Build response
@@ -466,8 +486,8 @@ sub handle_get_host {
         smbPasswd => $smbPass,
 
         # Note: Backup schedules are in WakeupSchedule, not per-host
-        fullBackupPeriod => "6.97",    # Default
-        incrBackupPeriod => "0.97",  # Default
+        fullBackupPeriod => $fullBackupPeriod,    
+        incrBackupPeriod => $incrBackupPeriod,  
     };
 
     return json_success($response);
@@ -542,10 +562,10 @@ sub handle_post_hosts {
             $hostConfig->{ClientIncrKeepCnt} = {} if ( ref($hostConfig->{ClientIncrKeepCnt}) ne "HASH" );
             $hostConfig->{ClientIncrKeepCnt}->{$hostname} = $data->{retentionIncr};
         }
-        if ( defined($data->{clientCharset}) ) {
-            $hostConfig->{ClientCharset} = {} if ( ref($hostConfig->{ClientCharset}) ne "HASH" );
-            $hostConfig->{ClientCharset}->{$hostname} = $data->{clientCharset};
-        }
+       # if ( defined($data->{clientCharset}) ) {
+         #   $hostConfig->{ClientCharset} = {} if ( ref($hostConfig->{ClientCharset}) ne "HASH" );
+         #   $hostConfig->{ClientCharset}->{$hostname} = $data->{clientCharset};
+       # }
         if ( defined($data->{smbShare}) ) {
             $hostConfig->{ClientSmbShareName} = {} if ( ref($hostConfig->{ClientSmbShareName}) ne "HASH" );
             $hostConfig->{ClientSmbShareName}->{$hostname} = $data->{smbShare};

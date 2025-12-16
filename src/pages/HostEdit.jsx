@@ -187,6 +187,7 @@ const HostEdit = () => {
             value={formData.smbUserName || ""}
             onChange={handleChange}
             placeholder="backupuser"
+            disabled
           />
 
           <label htmlFor="smbPasswd">SMB Password:</label>

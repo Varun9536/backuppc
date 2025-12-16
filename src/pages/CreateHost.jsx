@@ -14,9 +14,9 @@ const CreateHost = () => {
     hostname: '',
     dhcpFlag: '0',
     user: '',
-    xferMethod: 'rsync',
-    clientCharset: 'cp1252',
-    smbShare: 'C$',
+    xferMethod: 'smb',
+    clientCharset: 'utf8',
+    smbShare: '',
     fullBackupSchedule: '6.97',
     incrBackupSchedule: '0.97',
     retentionFull: 30,
@@ -133,14 +133,14 @@ const CreateHost = () => {
           name="xferMethod"
           value={formData.xferMethod}
           onChange={handleChange}
-        >
-          <option value="rsync">rsync</option>
+        >       
           <option value="smb">SMB/CIFS</option>
+          <option value="rsync">rsync</option>
           <option value="tar">tar</option>
           <option value="ftp">FTP</option>
         </select>
 
-        <label htmlFor="clientCharset">Client Charset (for Windows clients):</label>
+        {/* <label htmlFor="clientCharset">Client Charset (for Windows clients):</label>
         <input
           type="text"
           id="clientCharset"
@@ -148,9 +148,9 @@ const CreateHost = () => {
           value={formData.clientCharset}
           onChange={handleChange}
           placeholder="cp1252"
-        />
+        /> */}
 
-        <label htmlFor="smbShare">SMB Share Name (if using SMB):</label>
+        {/* <label htmlFor="smbShare">SMB Share Name (if using SMB):</label>
         <input
           type="text"
           id="smbShare"
@@ -158,7 +158,7 @@ const CreateHost = () => {
           value={formData.smbShare}
           onChange={handleChange}
           placeholder="C$"
-        />
+        /> */}
 
         <label htmlFor="fullBackupSchedule">Full Backup Schedule:</label>
         <input
