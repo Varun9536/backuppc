@@ -1,22 +1,25 @@
 import Navigation from './Navigation'
 import styles from './Layout.module.css'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../Redux/userSlice'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
+import { userRoles } from '../services/role'
 
-const Layout = ({ children }) => {
+const Layout = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const {clearstate} = useApp()
+  const {clearState} = useApp()
+
+  const {role} = useSelector((state)=> state.user)
 
   const handleLogout = ()=>
   {
    
     dispatch(logout())
-    clearstate()
+    clearState()
     navigate("/")
   }
 
@@ -28,7 +31,7 @@ const Layout = ({ children }) => {
           <div className={styles.brandMark}>IS</div>
           <div className={styles.brandText}>
             <span className={styles.brandName}>ISyncLite</span>
-            <span className={styles.brandSub}>Backup Administration</span>
+            {role == userRoles.level1 ?  <span className={styles.brandSub}>Backup User</span> :  <span className={styles.brandSub}>Backup Administration</span>}          
           </div>
         </div>
          <div onClick={handleLogout} className={styles.userBadge}>Logout</div>
@@ -43,7 +46,15 @@ const Layout = ({ children }) => {
       </aside>
 
       <main className={styles.main}>
-        <div className={styles.mainInner}>{children}</div>
+        <div className={styles.mainInner}>
+          
+          {/* {children} */}
+      
+      
+          <Outlet/>
+          
+          </div>
+       
       </main>
     </div>
   )

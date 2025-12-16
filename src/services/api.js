@@ -304,7 +304,15 @@ export const notificationsAPI = {
       return await res.json();
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      return null;
+      // return null;
+      return {
+        emailFrom: '',
+        emailTo: '',
+        sendReminders: true,
+        reminderSchedule: '',
+        emailSubject: '',
+        emailBody: ''
+      }
     }
   },
 

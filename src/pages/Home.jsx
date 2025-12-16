@@ -5,7 +5,7 @@ import { userRoles } from '../services/role';
 
 const Home = () => {
 
-  const {role} = useSelector((state) => state.user);
+  const { role } = useSelector((state) => state.user);
   const menuItems = [
     {
       path: '/global-config',
@@ -47,7 +47,7 @@ const Home = () => {
 
 
 
-  const userMenuItems = [ 
+  const userMenuItems = [
     {
       path: '/backups',
       label: 'Backups',
@@ -73,7 +73,7 @@ const Home = () => {
       <section className={styles.hero}>
         <div>
           <p className={styles.eyebrow}>Backup Health at a Glance</p>
-          <h1>ISyncLite Backup Admin Panel</h1>
+          {role == userRoles.level1 ? <h1>ISyncLite Backup User Panel</h1> : <h1>ISyncLite Backup Admin Panel</h1>}
           <p className={styles.subtitle}>
             Configure clients, orchestrate backups, restore data and keep teams in the loop,
             all from a single delightful console.
@@ -89,7 +89,7 @@ const Home = () => {
       </section>
 
       <nav className={styles.menuGrid}>
-        {role ==  userRoles.level2 && menuItems.map(item => (
+        {role == userRoles.level2 && menuItems.map(item => (
           <Link key={item.path} to={item.path} className={styles.menuCard}>
             <div className={styles.iconBubble}>{item.icon}</div>
             <div>

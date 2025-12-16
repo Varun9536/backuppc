@@ -16,6 +16,9 @@ const Notifications = () => {
     emailBody: ''
   })
 
+  // const [formData, setFormData] = useState()
+
+
   useEffect(() => {
     loadConfig()
   }, [])
@@ -24,7 +27,9 @@ const Notifications = () => {
     try {
       setLoading(true)
       const config = await notificationsAPI.get()
-      setFormData(config)
+setFormData(config)
+      
+
     } catch (error) {
       console.error('Error loading notification config:', error)
       alert('Failed to load notification configuration')
@@ -68,7 +73,7 @@ const Notifications = () => {
           type="email"
           id="emailFrom"
           name="emailFrom"
-          value={formData.emailFrom}
+          value={formData?.emailFrom}
           onChange={handleChange}
           placeholder="no-reply@example.com"
         />
@@ -78,7 +83,7 @@ const Notifications = () => {
           type="text"
           id="emailTo"
           name="emailTo"
-          value={formData.emailTo}
+          value={formData?.emailTo}
           onChange={handleChange}
           placeholder="user@example.com,admin@example.com"
         />
@@ -87,7 +92,7 @@ const Notifications = () => {
         <select
           id="sendReminders"
           name="sendReminders"
-          value={formData.sendReminders ? '1' : '0'}
+          value={formData?.sendReminders ? '1' : '0'}
           onChange={(e) =>
             setFormData(prev => ({
               ...prev,
@@ -104,7 +109,7 @@ const Notifications = () => {
           type="text"
           id="reminderSchedule"
           name="reminderSchedule"
-          value={formData.reminderSchedule}
+          value={formData?.reminderSchedule}
           onChange={handleChange}
           placeholder="0 8 * * * (Daily at 8 AM)"
         />
@@ -114,7 +119,7 @@ const Notifications = () => {
           type="text"
           id="emailSubject"
           name="emailSubject"
-          value={formData.emailSubject}
+          value={formData?.emailSubject}
           onChange={handleChange}
           placeholder="BackupPC Notification"
         />
@@ -123,7 +128,7 @@ const Notifications = () => {
         <textarea
           id="emailBody"
           name="emailBody"
-          value={formData.emailBody}
+          value={formData?.emailBody}
           onChange={handleChange}
           placeholder="Hello,&#10;&#10;This is a reminder that your backup is due."
           rows="5"

@@ -23,36 +23,29 @@ function App() {
       <Router>
 
         <Routes>
+
+
           <Route path='/' element={<PublicRoute isLoggedIn={isLoggedIn}>
             <Login />
           </PublicRoute>} >
           </Route>
+
+          <Route element={<PrivateRoute isLoggedIn={ isLoggedIn}>
+            <Layout />
+          </PrivateRoute>}>
+
+            <Route path="/home" element={<Home />} />
+            <Route path="/global-config" element={<GlobalConfig />} />
+            <Route path="/hosts" element={<HostsList />} />
+            <Route path="/hosts/createHost" element={<CreateHost />} />
+            <Route path="/hosts/edit/:hostname" element={<HostEdit />} />
+            <Route path="/backups" element={<Backups />} />
+            <Route path="/restore" element={<Restore />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/notifications" element={<Notifications />} />
+
+          </Route>
         </Routes>
-
-
-
-
-        <PrivateRoute isLoggedIn={isLoggedIn}>
-
-          <Layout>
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/global-config" element={<GlobalConfig />} />
-              <Route path="/hosts" element={<HostsList />} />
-              <Route path="/hosts/createHost" element={<CreateHost />} />
-              <Route path="/hosts/edit/:hostname" element={<HostEdit />} />
-              <Route path="/backups" element={<Backups />} />
-              <Route path="/restore" element={<Restore />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/notifications" element={<Notifications />} />
-            </Routes>
-          </Layout>
-
-        </PrivateRoute>
-
-
-
-
 
       </Router>
     </AppProvider>
