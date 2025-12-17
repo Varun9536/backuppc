@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { AppProvider } from './context/AppContext'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
+import { AppProvider, useApp } from './context/AppContext'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import GlobalConfig from './pages/GlobalConfig'
@@ -11,13 +11,28 @@ import Reports from './pages/Reports'
 import Notifications from './pages/Notifications'
 import CreateHost from './pages/CreateHost'
 import { PrivateRoute, PublicRoute } from './components/RouteChecking'
-import { useSelector } from 'react-redux'
+import {  useSelector } from 'react-redux'
 import Login from './pages/Login'
 
 function App() {
 
 
+  
+
+
+
+
+
+
+  
+
+
+
   const { isLoggedIn } = useSelector((state) => state.user)
+
+
+
+
   return (
     <AppProvider>
       <Router>
@@ -30,7 +45,7 @@ function App() {
           </PublicRoute>} >
           </Route>
 
-          <Route element={<PrivateRoute isLoggedIn={ isLoggedIn}>
+          <Route element={<PrivateRoute isLoggedIn={isLoggedIn}>
             <Layout />
           </PrivateRoute>}>
 
@@ -48,6 +63,8 @@ function App() {
         </Routes>
 
       </Router>
+
+      
     </AppProvider>
   )
 }
