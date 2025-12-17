@@ -16,29 +16,13 @@ import Login from './pages/Login'
 
 function App() {
 
-
-  
-
-
-
-
-
-
-  
-
-
-
   const { isLoggedIn } = useSelector((state) => state.user)
-
-
-
 
   return (
     <AppProvider>
       <Router>
 
         <Routes>
-
 
           <Route path='/' element={<PublicRoute isLoggedIn={isLoggedIn}>
             <Login />

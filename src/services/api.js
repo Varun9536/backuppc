@@ -1,7 +1,8 @@
 // api.js
 
-const BASE_URL = 'http://192.168.1.37:8081';
+//const BASE_URL = 'http://192.168.1.37:8081';
 
+const BASE_URL = '';
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
