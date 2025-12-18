@@ -9,8 +9,9 @@
   padding: 0px 10px; /* small padding for mobile */
 }
 .isyncLogin{
-  width: 67%;
-  height: 70%;
+  width: 100%;
+  height: 70vh;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .loginBox {
@@ -22,6 +23,7 @@
   max-width: 400px; /* responsive max width */
   box-sizing: border-box;
   transition: all 0.3s ease;
+  height: 70vh;
 }
 
 .title {

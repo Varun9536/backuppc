@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../services/api";
 import { setLoginData } from "../Redux/userSlice";
-import isynclogin from "../assets/Login.jpeg";
+import isynclogin from "../assets/Login.png";
 
 function Login() {
   const dispatch = useDispatch();
