@@ -92,8 +92,10 @@ const Reports = () => {
           disabled={loading}
         >
           <option value="backup">Backup Logs</option>
-          <option value="restore">Restore Logs</option>
-          <option value="system">System Logs</option>
+
+         {/* <option value="restore">Restore Logs</option>
+          <option value="system">System Logs</option> */} 
+
         </select>
       </div>
 
