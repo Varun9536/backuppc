@@ -13,7 +13,7 @@ const Backups = () => {
   const [loading, setLoading] = useState(true)
   const [triggering, setTriggering] = useState({})
 
-  const { role  , userid} = useSelector((state) => state.user)
+  const { role, userid } = useSelector((state) => state.user)
 
   // useEffect(() => {
   //   if (contextBackups.length > 0) {
@@ -24,38 +24,32 @@ const Backups = () => {
   //   }
   // }, [contextBackups])
 
-  useEffect(()=>
-  {
-    loadBackups()
-  } , [])
+  // useEffect(() => {
+  //   loadBackups()
+  // }, [])
 
   const loadBackups = async () => {
 
-   
     try {
+
       setLoading(true)
       // setBackups([])
-
-      if (role ==  userRoles.level2) {
+     
+      if (role == userRoles.level2) {
         const data = await backupsAPI.list()
         setBackups(data)
       }
 
       if (role == userRoles.level1) {
-       
+
         const admindata = await backupsAPI.list()
-        const userdata = await restoreAPI.getUserHosts({userid})
+        const userdata = await restoreAPI.getUserHosts({ userid })
         const matchedObjects = admindata?.filter(host_name =>
           userdata?.hosts?.includes(host_name.hostname)
         );
         setBackups(matchedObjects)
 
       }
-
-
-
-
-
     } catch (error) {
       console.error('Error loading backups:', error)
       alert('Failed to load backups')
@@ -63,6 +57,22 @@ const Backups = () => {
       setLoading(false)
     }
   }
+
+
+  useEffect(() => {
+
+    loadBackups()
+    let timer = setInterval(() => {
+      
+      loadBackups()
+    }, 15000)
+
+
+    return () => {
+      clearInterval(timer)
+    }
+
+  }, [])
 
 
 
@@ -74,7 +84,7 @@ const Backups = () => {
       refreshBackups()
       loadBackups()
     } catch (error) {
-     // console.error('Error triggering backup:', error)
+      // console.error('Error triggering backup:', error)
       //alert('Failed to trigger backup')
     } finally {
       setTriggering(prev => ({ ...prev, [`${hostname}_${type}`]: false }))
