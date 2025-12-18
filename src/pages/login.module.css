@@ -2,11 +2,14 @@
 
 .container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 100vh;
   background-color: #f5f6fa;
   padding: 20px; /* small padding for mobile */
+}
+.isyncLogin{
+ width: 55%;
 }
 
 .loginBox {

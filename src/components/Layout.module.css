@@ -151,6 +151,12 @@
   margin: 0 auto;
 }
 
+.isyncLogo
+{
+  width: 4rem;
+  margin-top: 8px;
+}
+
 @media (max-width: 960px) {
   .appShell {
     grid-template-rows: 56px auto 1fr;

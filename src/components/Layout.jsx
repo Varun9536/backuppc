@@ -6,6 +6,7 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { userRoles } from '../services/role'
 import { useEffect } from 'react'
+import isynclogo from "../assets/Logo.svg"
 
 const Layout = () => {
 
@@ -58,7 +59,10 @@ const Layout = () => {
     <div className={styles.appShell}>
       <header className={styles.topbar}>
         <div className={styles.brand}>
-          <div className={styles.brandMark}>IS</div>
+          {/* <div className={styles.brandMark}>IS</div> */}
+          <div  className={styles.isyncLogo} >
+            <img style={{width : "100%"}} src={isynclogo} alt="" />
+          </div>
           <div className={styles.brandText}>
             <span className={styles.brandName}>ISyncLite</span>
             {role == userRoles.level1 ? <span className={styles.brandSub}>Backup User</span> : <span className={styles.brandSub}>Backup Administration</span>}

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../services/api";
 import { setLoginData } from "../Redux/userSlice";
+import isynclogin from "../assets/Login.jpeg";
 
 function Login() {
   const dispatch = useDispatch();
@@ -80,6 +81,9 @@ function Login() {
 
   return (
     <div className={styles.container}>
+      <div  className={styles.isyncLogin} >
+          <img style={{width : "100%"}} src={isynclogin} alt="" />
+       </div>
       <div className={styles.loginBox}>
         <h2 className={styles.title}>Login</h2>
         <form onSubmit={handleLogin}>
@@ -110,7 +114,7 @@ function Login() {
           </button>
         </form>
         <div className={styles.footer}>
-          &copy; 2025 BackupPC Dashboard
+          &copy; 2025 ISyncLite BackupPC Dashboard
         </div>
       </div>
     </div>
