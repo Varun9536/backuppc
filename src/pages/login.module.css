@@ -6,10 +6,11 @@
   align-items: center;
   height: 100vh;
   background-color: #f5f6fa;
-  padding: 20px; /* small padding for mobile */
+  padding: 0px 30px; /* small padding for mobile */
 }
 .isyncLogin{
- width: 55%;
+ width: 61%;
+ height: 100%;
 }
 
 .loginBox {

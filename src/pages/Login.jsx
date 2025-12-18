@@ -82,7 +82,7 @@ function Login() {
   return (
     <div className={styles.container}>
       <div  className={styles.isyncLogin} >
-          <img style={{width : "100%"}} src={isynclogin} alt="" />
+          <img style={{width : "100%" ,height:"100%"}} src={isynclogin} alt="" />
        </div>
       <div className={styles.loginBox}>
         <h2 className={styles.title}>Login</h2>
