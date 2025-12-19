@@ -77,7 +77,7 @@ export const hostsAPI = {
 
       return {
         hostname: data?.hostname ?? "",
-        dhcpFlag: data?.dhcp ?? "0",
+        dhcpFlag: data?.dhcpFlag ?? "0",
         user: data?.user ?? "",
         moreUsers: data?.moreUsers ?? "",
         xferMethod: data?.xferMethod ?? "rsync",
@@ -85,7 +85,7 @@ export const hostsAPI = {
         incrBackupPeriod: data?.incrBackupPeriod ?? "",
         smbShare: data?.smbShare ?? "",
         smbUserName: data?.user ?? "",
-        smbPasswd: "" // never return actual password
+        smbPasswd: data?.smbPasswd ?? "" 
       };
     } catch (error) {
       console.error("Error fetching host details:", error);
