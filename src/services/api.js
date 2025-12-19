@@ -84,7 +84,7 @@ export const hostsAPI = {
         fullBackupPeriod: data?.fullBackupPeriod ?? "",
         incrBackupPeriod: data?.incrBackupPeriod ?? "",
         smbShare: data?.smbShare ?? "",
-        smbUserName: data?.user ?? "",
+        smbUserName: data?.smbShareUserName ?? "",
         smbPasswd: data?.smbPasswd ?? "" 
       };
     } catch (error) {

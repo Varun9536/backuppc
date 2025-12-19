@@ -382,7 +382,16 @@ sub handle_get_host {
     if ( !defined $conf || ref($conf) ne 'HASH' ) {
         $conf = {};
     }
-    my $smbPass = $hostConfig->{Conf}{SmbSharePasswd} // "";
+    my $smbPass = (defined $hostConfig->{SmbSharePasswd} && $hostConfig->{SmbSharePasswd} ne ''
+              ? $hostConfig->{SmbSharePasswd}
+              : undef)
+       // (defined $hostConfig->{SmbSharePasswd} && $hostConfig->{SmbSharePasswd} ne ''
+              ? $hostConfig->{SmbSharePasswd}
+              : undef)
+       // (defined $conf->{SmbSharePasswd} && $conf->{SmbSharePasswd} ne ''
+              ? $conf->{SmbSharePasswd}
+              : undef)
+       // '';
     # ------------------------------------------------------------------
     # Retention counts – treat everything as simple scalars
     # ------------------------------------------------------------------
@@ -416,8 +425,8 @@ sub handle_get_host {
     # ------------------------------------------------------------------
 
     my $smbShare =
-          (defined $hostConfig->{ClientSmbShareName} && $hostConfig->{ClientSmbShareName} ne ''
-              ? $hostConfig->{ClientSmbShareName}
+          (defined $hostConfig->{SmbShareName} && $hostConfig->{SmbShareName} ne ''
+              ? $hostConfig->{SmbShareName}
               : undef)
        // (defined $hostConfig->{SmbShareName} && $hostConfig->{SmbShareName} ne ''
               ? $hostConfig->{SmbShareName}
@@ -443,23 +452,41 @@ sub handle_get_host {
     }
      # Resolve effective backup periods (host override -> global)
     my $fullBackupPeriod =
-       (defined $hostConfig->{Conf}{fullBackupPeriod}
-            && $hostConfig->{Conf}{fullBackupPeriod} ne '')
-            ? $hostConfig->{Conf}{fullBackupPeriod}
-            : (defined $conf->{fullBackupPeriod}
-                    && $conf->{fullBackupPeriod} ne '')
-                    ? $conf->{fullBackupPeriod}
-                    : 6.97;
+        (defined $hostConfig->{FullPeriod} && $hostConfig->{FullPeriod} ne ''
+              ? $hostConfig->{FullPeriod}
+              : undef)
+       // (defined $hostConfig->{FullPeriod} && $hostConfig->{FullPeriod} ne ''
+              ? $hostConfig->{FullPeriod}
+              : undef)
+       // (defined $conf->{FullPeriod} && $conf->{FullPeriod} ne ''
+              ? $conf->{FullPeriod}
+              : undef)
+       // 6.97;
 
   my $incrBackupPeriod =
-       (defined $hostConfig->{Conf}{incrBackupPeriod}
-            && $hostConfig->{Conf}{incrBackupPeriod} ne '')
-            ? $hostConfig->{Conf}{incrBackupPeriod}
-            : (defined $conf->{incrBackupPeriod}
-                    && $conf->{incrBackupPeriod} ne '')
-                    ? $conf->{incrBackupPeriod}
-                    : 0.97;
+       (defined $hostConfig->{IncrPeriod} && $hostConfig->{IncrPeriod} ne ''
+              ? $hostConfig->{IncrPeriod}
+              : undef)
+       // (defined $hostConfig->{IncrPeriod} && $hostConfig->{IncrPeriod} ne ''
+              ? $hostConfig->{IncrPeriod}
+              : undef)
+       // (defined $conf->{IncrPeriod} && $conf->{IncrPeriod} ne ''
+              ? $conf->{IncrPeriod}
+              : undef)
+       // 0.97;
 
+
+    my $smbShareUserName =
+       (defined $hostConfig->{SmbShareUserName} && $hostConfig->{SmbShareUserName} ne ''
+              ? $hostConfig->{SmbShareUserName}
+              : undef)
+       // (defined $hostConfig->{SmbShareUserName} && $hostConfig->{SmbShareUserName} ne ''
+              ? $hostConfig->{SmbShareUserName}
+              : undef)
+       // (defined $conf->{SmbShareUserName} && $conf->{SmbShareUserName} ne ''
+              ? $conf->{SmbShareUserName}
+              : undef)
+       // '';
 
 
     # ------------------------------------------------------------------
@@ -479,11 +506,12 @@ sub handle_get_host {
                       // $conf->{ClientCharset}
                       // "",
 
-        smbShare      => "/",
+        smbShare      => $smbShare,
 
         retentionFull => $fullKeepCnt,
         retentionIncr => $incrKeepCnt,
         smbPasswd => $smbPass,
+        smbShareUserName => $smbShareUserName,
 
         # Note: Backup schedules are in WakeupSchedule, not per-host
         fullBackupPeriod => $fullBackupPeriod,    
