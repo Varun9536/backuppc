@@ -23,13 +23,13 @@
 
 .selectGroup select:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #55BBE2;
 }
 
 .loadButton {
   margin-top: 15px;
   padding: 10px 20px;
-  background: #007bff;
+  background: #55BBE2;
   color: white;
   border: none;
   border-radius: 4px;
@@ -61,7 +61,7 @@
 
 .logContent:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #55BBE2;
 }
 
 .backButton {

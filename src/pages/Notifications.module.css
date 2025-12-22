@@ -35,7 +35,7 @@
 .form select:focus,
 .form textarea:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #55BBE2;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -47,7 +47,7 @@
 .form button {
   margin-top: 20px;
   padding: 10px 20px;
-  background: #2563eb;
+  background: #55BBE2;
   color: #fff;
   border: none;
   border-radius: 999px;

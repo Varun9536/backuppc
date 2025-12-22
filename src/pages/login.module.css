@@ -55,7 +55,7 @@
 
 .inputGroup input:focus {
   outline: none;
-  border-color: #0984e3;
+  border-color: #55BBE2;
 }
 
 .error {
@@ -69,7 +69,7 @@
   padding: 12px;
   border: none;
   border-radius: 8px;
-  background-color: #0984e3;
+  background-color: #55BBE2;
   color: #fff;
   font-size: 18px;
   cursor: pointer;

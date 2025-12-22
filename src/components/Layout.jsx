@@ -64,7 +64,7 @@ const Layout = () => {
             <img style={{ width: "100%" }} src={isynclogo} alt="ISyncLite" />
           </div>
           <div className={styles.brandText}>
-            <span className={styles.brandName}>ISyncLite</span>
+            {/* <span className={styles.brandName}>ISyncLite</span> */}
             {role === userRoles.level1
               ? <span className={styles.brandSub}>Backup User</span>
               : <span className={styles.brandSub}>Backup Administration</span>}

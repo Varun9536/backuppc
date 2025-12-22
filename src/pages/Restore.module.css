@@ -23,7 +23,7 @@
 
 .selectGroup select:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #55BBE2;
 }
 
 .fileBrowser {
@@ -57,7 +57,7 @@
 }
 
 .fileItem.file {
-  color: #007bff;
+  color: #55BBE2;
 }
 
 .backButton {

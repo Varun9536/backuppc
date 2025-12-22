@@ -26,13 +26,13 @@
 
 .form input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #55BBE2;
 }
 
 .form button {
   margin-top: 20px;
   padding: 10px 20px;
-  background: #007bff;
+  background: #55BBE2;
   color: white;
   border: none;
   border-radius: 4px;
