@@ -70,15 +70,19 @@ const Layout = () => {
               : <span className={styles.brandSub}>Backup Administration</span>}
           </div>
         </div>
-        {role === userRoles.level2 && (
-          <div onClick={handleHelp} className={styles.userBadgeHelp}>
-            {showHelp ? "Close Help" : "Help"}
-          </div>
-        )}
 
-        <div onClick={handleLogout} className={styles.userBadge}>
-          Logout
+        <div style={{display:'flex',gap:"0px 10px"}}>
+          {/* {role === userRoles.level2 && (
+            <div onClick={handleHelp} className={styles.userBadgeHelp}>
+              {showHelp ? "Close Help" : "Help"}
+            </div>
+          )} */}
+
+          <div onClick={handleLogout} className={styles.userBadge}>
+            Logout
+          </div>
         </div>
+
       </header>
 
       <aside className={styles.sidebar}>
