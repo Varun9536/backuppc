@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { userApi } from "../services/api";
 import { setLoginData } from "../Redux/userSlice";
 import isynclogin from "../assets/Login.png";
-import logo1 from "../assets/Image.png"
+import threeImages from "../assets/Image.png"
+import cloudlogo from "../assets/Logo.svg"
 
 function Login() {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ function Login() {
   const [errors, setErrors] = useState({});
 
   // userid regex for validation
-//   const useridRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   const useridRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const validate = () => {
     const tempErrors = {};
@@ -39,11 +40,11 @@ function Login() {
 
     if (!validate()) return;
 
-   // console.log(password , userid)
+    // console.log(password , userid)
 
     const payload = {
-        userid ,
-        password
+      userid,
+      password
 
     }
 
@@ -56,24 +57,23 @@ function Login() {
     //   role: "Admin",
     // };
 
-    const data =  await userApi.login(payload)
-   // console.log(data)
+    const data = await userApi.login(payload)
+    // console.log(data)
 
-    if(data?.status == "success")
-    {
-        // dispatch(setLoginData({
-        //     role : data?.role
-        // }))
+    if (data?.status == "success") {
+      // dispatch(setLoginData({
+      //     role : data?.role
+      // }))
 
-        dispatch(setLoginData({
-            role : data?.role ,
-            userid : data?.user
+      dispatch(setLoginData({
+        role: data?.role,
+        userid: data?.user
 
-        }))
+      }))
 
-        navigate("/home")
-    }else{
-        alert("Invalid userid or password");
+      navigate("/home")
+    } else {
+      alert("Invalid userid or password");
     }
 
     // dispatch(setLoginData(userData));
@@ -82,10 +82,30 @@ function Login() {
 
   return (
     <div className={styles.container}>
-      <div  className={styles.isyncLogin} >
-          <img style={{width : "100%" ,height:"100%"}} src={isynclogin} alt="" />
-       </div>
-      <div className={styles.loginBox}>
+      <div className={styles.isyncLogin} >
+
+
+        <div className={styles.cloudlogoBox}>
+          <img style={{ width: "100%" }} src={cloudlogo} alt="" />
+        </div>
+
+        <div className={styles.IsyncLiBox}>
+
+          <div>Smart</div>
+          <li>Secure</li>
+          <li>Intelligent Backup</li>
+
+
+        </div>
+        <div className={styles.threeImagesBox}>
+          <img style={{ width: "100%" }} src={threeImages} alt="" />
+        </div>
+
+
+      </div>
+
+
+      <div className={styles.loginBox}>    
         <h2 className={styles.title}>Login</h2>
         <form onSubmit={handleLogin}>
           <div className={styles.inputGroup}>
