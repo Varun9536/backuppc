@@ -73,6 +73,20 @@
   
   cursor: pointer;
 }
+.userBadgeHelp{
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  font-size: 12px;
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.08);
+  cursor: pointer;
+  margin-left: 30rem;
+}
+.userBadgeHelp:hover {
+  
+  cursor: pointer;
+}
 
 .sidebar {
   grid-area: sidebar;
