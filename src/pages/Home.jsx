@@ -79,13 +79,13 @@ const Home = () => {
             all from a single delightful console.
           </p>
         </div>
-        <div className={styles.heroBadge}>
+        {/* <div className={styles.heroBadge}>
           <span className={styles.badgeIcon}>☁</span>
           <div>
             <strong>4.4.0</strong>
             <p>Powered by BackupPC</p>
           </div>
-        </div>
+        </div> */}
       </section>
 
       <nav className={styles.menuGrid}>
