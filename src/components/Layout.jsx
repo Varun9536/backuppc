@@ -6,7 +6,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { userRoles } from '../services/role'
 import { useEffect, useState } from 'react'
-import isynclogo from "../assets/Logo.svg"
+import isynclogo from "../assets/Logo2.svg"
 
 const Layout = () => {
 
