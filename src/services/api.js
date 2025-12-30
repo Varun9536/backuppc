@@ -3,8 +3,32 @@
 //const BASE_URL = 'http://192.168.1.37:8081';
 
 const BASE_URL = '';
+const BASE_URL_CLOUD = "http://127.0.0.1:8082";
+const BASE_URL_LOG = "http://127.0.0.1:8085";
+const BASE_URL_READLOG = "http://127.0.0.1:3000";
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper function to append logs
+export const writeLog = async (level, message) => {
+  try {
+    await fetch(`${BASE_URL_LOG}/log`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ level, message }),
+    });
+  } catch (err) {
+    console.error("Failed to send log:", err);
+  }
+};
+// Fetch the log file (plain text)
+export async function fetchLog() {
+  const response = await fetch(`${BASE_URL_READLOG}/readlog`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch log");
+  }
+  return response.text(); 
+}
 
 // ------------------------- Global Config API -------------------------
 export const globalConfigAPI = {
@@ -85,7 +109,7 @@ export const hostsAPI = {
         incrBackupPeriod: data?.incrBackupPeriod ?? "",
         smbShare: data?.smbShare ?? "",
         smbUserName: data?.smbShareUserName ?? "",
-        smbPasswd: data?.smbPasswd ?? "" 
+        smbPasswd: data?.smbPasswd ?? ""
       };
     } catch (error) {
       console.error("Error fetching host details:", error);
@@ -350,3 +374,35 @@ export const userApi = {
     }
   }
 };
+// Cloud APIs
+
+const request = async (url, options) => {
+  const res = await fetch(`${BASE_URL_CLOUD}${url}`, options);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+};
+
+export const startSync = (spath,dpath) =>
+  request("/sync/copy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      //_async: true,
+      srcFs: spath,
+      dstFs: dpath,
+      opt: {
+        no_update_dir_modtime: true,   
+        create_empty_src_dirs: true,   
+        ignore_existing: false,        
+        retries: 3    
+      }
+    })
+
+  });
+
+export const getJobStatus = (jobid) =>
+  request("/job/status", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jobid }),
+  });

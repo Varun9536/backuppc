@@ -13,6 +13,12 @@ import CreateHost from './pages/CreateHost'
 import { PrivateRoute, PublicRoute } from './components/RouteChecking'
 import {  useSelector } from 'react-redux'
 import Login from './pages/Login'
+import CloudReportsLogs from './pages/CloudReportsLogs'
+import CloudNotifications from './pages/CloudNotifications'
+import CloudOverview from './pages/CloudOverview'
+import CloudBackups from './pages/CloudBackups'
+import CloudTransfers from './pages/CloudTransfers'
+import CloudSettings from './pages/CloudSettings'
 
 function App() {
 
@@ -42,6 +48,12 @@ function App() {
             <Route path="/restore" element={<Restore />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/cloud/overview" element={<CloudOverview />} />
+            <Route path="/cloud/backups" element={<CloudBackups />} />
+            <Route path="/cloud/transfers" element={<CloudTransfers />} />
+            <Route path="/cloud/reports" element={<CloudReportsLogs />} />
+            <Route path="/cloud/notifications" element={<CloudNotifications />} />
+            <Route path="/cloud/settings" element={<CloudSettings />} />
 
           </Route>
         </Routes>
