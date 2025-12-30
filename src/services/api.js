@@ -3,9 +3,9 @@
 //const BASE_URL = 'http://192.168.1.37:8081';
 
 const BASE_URL = '';
-const BASE_URL_CLOUD = "http://127.0.0.1:8082";
-const BASE_URL_LOG = "http://127.0.0.1:8085";
-const BASE_URL_READLOG = "http://127.0.0.1:3000";
+const BASE_URL_CLOUD = "https://machines-elimination-instruction-phpbb.trycloudflare.com"//"http://127.0.0.1:8082";
+const BASE_URL_LOG = "https://tourism-pleased-candidate-listings.trycloudflare.com"//"http://127.0.0.1:8085";
+const BASE_URL_READLOG = "https://raid-languages-chest-dispatch.trycloudflare.com"//"http://127.0.0.1:3000";
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
