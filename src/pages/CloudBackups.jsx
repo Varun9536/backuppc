@@ -101,7 +101,7 @@ const handleClick = async (selectedHost) => {
     alert(`${selectedHost} restored Successfully !`);
     writeLog("INFO", `Host ${selectedHost} restored successfully sync/copy api`);
 
-    await writeLog("INFO", `Payload {sourcepath -  ${dpath}, destinationpath - ${spath}`);
+    await writeLog("INFO", `Payload {sourcepath -  ${dpath}, destinationpath - ${spath}}`);
 
     setSyncing(false);
   } catch (err) {

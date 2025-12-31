@@ -94,7 +94,7 @@ const CloudTransfers = () => {
       // log success
       await writeLog("INFO", `Sync completed successfully for host ${selectedHost} by sync/copy api`);
 
-      await writeLog("INFO", `Payload {sourcepath -  ${spath}, destinationpath - ${dpath}`);
+      await writeLog("INFO", `Payload {sourcepath -  ${spath}, destinationpath - ${dpath}}`);
 
       alert(`${selectedHost} Sync Successfully !`);
       setSyncing(false);
