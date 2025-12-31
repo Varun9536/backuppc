@@ -6,6 +6,7 @@ const BASE_URL = '';
 const BASE_URL_CLOUD = "https://machines-elimination-instruction-phpbb.trycloudflare.com"//"http://127.0.0.1:8082";
 const BASE_URL_LOG = "https://tourism-pleased-candidate-listings.trycloudflare.com"//"http://127.0.0.1:8085";
 const BASE_URL_READLOG = "https://raid-languages-chest-dispatch.trycloudflare.com"//"http://127.0.0.1:3000";
+const BASE_URL_PERMISSION = "https://defendant-striking-decrease-dana.trycloudflare.com"//"http://127.0.0.1:8084";
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -29,6 +30,28 @@ export async function fetchLog() {
   }
   return response.text(); 
 }
+// set permission
+export async function setPermissions(dir) {
+  try {
+    const response = await fetch(`${BASE_URL_PERMISSION}/setpermissions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({dir : dir}) 
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error calling API:", error);
+    return { success: 0, message: error.message };
+  }
+}
+
 
 // ------------------------- Global Config API -------------------------
 export const globalConfigAPI = {

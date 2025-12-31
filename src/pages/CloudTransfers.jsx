@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync,restoreAPI,writeLog} from '../services/api'
+import { startSync,restoreAPI,writeLog,setPermissions} from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -78,8 +78,10 @@ const CloudTransfers = () => {
       alert("Please select a host");
       return;
     }
-    try {
+    try {    
       setSyncing(true);
+      const path = "/home/aagarwalAnubhav/BackupVMTest";
+      await setPermissions(path);
 
       const spath = `/home/aagarwalAnubhav/BackupVMTest/pc/${selectedHost}`;
       const dpath = `azure:sudheer/BackupVMTest/pc/${selectedHost}`;

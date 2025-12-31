@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { restoreAPI,startSync,writeLog } from '../services/api'
+import { restoreAPI,startSync,writeLog,setPermissions } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -90,6 +90,8 @@ const handleClick = async (selectedHost) => {
 
   try {
     setSyncing(true);
+    //const path = "/home/aagarwalAnubhav/BackupVMTest";
+    //await setPermissions(path);
     const spath = `/home/aagarwalAnubhav/BackupVMTest/pc/${selectedHost}`;
     const dpath = `azure:sudheer/BackupVMTest/pc/${selectedHost}`;
 
