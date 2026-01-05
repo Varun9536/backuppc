@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync,restoreAPI,writeLog,setPermissions} from '../services/api'
+import { startSync, restoreAPI, writeLog, setPermissions } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -12,9 +12,9 @@ const recent = [
 ]
 
 const schedule = [
-  { name: 'Global: Nightly sync', cron: '0 2 * * *', scope: 'All hosts (inherit)', nextRun: 'Tonight 02:00' },
-  { name: 'Host override: larson', cron: '30 3 * * 1-6', scope: 'Host larson (custom)', nextRun: 'Tomorrow 03:30' },
-  { name: 'Host override: zeus', cron: '15 1 * * 0', scope: 'Host zeus (custom)', nextRun: 'Sun 01:15' }
+  { name: 'Global: Nightly sync', cron: '0 2 * * *', scope: 'All hosts (inherit)', nextRun: 'Tonight 02:00' }
+  // { name: 'Host override: larson', cron: '30 3 * * 1-6', scope: 'Host larson (custom)', nextRun: 'Tomorrow 03:30' },
+  // { name: 'Host override: zeus', cron: '15 1 * * 0', scope: 'Host zeus (custom)', nextRun: 'Sun 01:15' }
 ]
 
 const card = {
@@ -59,6 +59,19 @@ const CloudTransfers = () => {
 
       const data = await restoreAPI.getHosts()
       // console.log(data)
+      while (recent.length < data.length) {
+        recent.push({ host: undefined });
+      }
+      recent.forEach((item, index) => {
+        item.host = data[index]?.user;
+        item.duration = '14ms';
+        item.ended = '02:15';
+        item.message = 'Uploaded 38 objects';
+        item.size = '100MB';
+        item.status = 'Success';
+        item.type = 'Full';
+      });
+
       setdata(data)
 
     } catch (error) {
@@ -78,7 +91,7 @@ const CloudTransfers = () => {
       alert("Please select a host");
       return;
     }
-    try {    
+    try {
       setSyncing(true);
       const path = "/home/aagarwalAnubhav/BackupVMTest";
       await setPermissions(path);
@@ -133,8 +146,8 @@ const CloudTransfers = () => {
         </select>
       </div>
 
-      {/* Recent Transfers */}
-      {/* <section style={{ marginTop: 16 }}>
+      {/* Recent Transfers  */}
+      <section style={{ marginTop: 16 }}>
         <h2>Recent Transfers</h2>
         <div style={card}>
           <table style={table}>
@@ -164,10 +177,10 @@ const CloudTransfers = () => {
             </tbody>
           </table>
         </div>
-      </section> */}
+      </section>
 
       {/* Scheduled Jobs */}
-      {/* <section style={{ marginTop: 18 }}>
+      <section style={{ marginTop: 18 }}>
         <h2>Scheduled Jobs</h2>
         <div style={card}>
           <table style={table}>
@@ -190,7 +203,7 @@ const CloudTransfers = () => {
             </tbody>
           </table>
         </div>
-      </section> */}
+      </section>
 
       {/* Manual Actions */}
       <section style={{ marginTop: 18 }}>

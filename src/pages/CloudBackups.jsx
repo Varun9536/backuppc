@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { restoreAPI,startSync,writeLog,setPermissions } from '../services/api'
+import { restoreAPI, startSync, writeLog, setPermissions } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -8,11 +8,11 @@ const hosts = ['farside', 'larson', 'apollo', 'zeus']
 const providers = ['All', 'AWS S3', 'Azure Blob', 'GCS']
 
 const backups = [
-  { provider: 'AWS S3', host: 'farside', backupId: '124', type: 'Full', date: '2025-12-15 02:00', size: '8.1 GB', status: 'Present', cloudPath: 's3://backuppc-prod/farside/124' },
-  { provider: 'AWS S3', host: 'farside', backupId: '123', type: 'Incr', date: '2025-12-14 02:00', size: '1.2 GB', status: 'Present', cloudPath: 's3://backuppc-prod/farside/123' },
-  { provider: 'Azure Blob', host: 'larson', backupId: '89', type: 'Full', date: '2025-12-15 02:05', size: '6.7 GB', status: 'Missing locally', cloudPath: 'azure://backuppc-az/larson/89' },
-  { provider: 'AWS S3', host: 'apollo', backupId: '211', type: 'Full', date: '2025-12-14 01:55', size: '9.4 GB', status: 'Present', cloudPath: 's3://backuppc-prod/apollo/211' },
-  { provider: 'GCS', host: 'zeus', backupId: '54', type: 'Incr', date: '2025-12-15 03:10', size: '900 MB', status: 'Queued verify', cloudPath: 'gs://backuppc-gcs/zeus/54' }
+  { provider: 'Azure Blob', host: 'farside', backupId: '124', type: 'Full', date: '2025-12-15 02:00', size: '8.1 GB', status: 'Present', cloudPath: 's3://backuppc-prod/farside/124' },
+  { provider: 'Azure Blob', host: 'farside', backupId: '123', type: 'Incr', date: '2025-12-14 02:00', size: '1.2 GB', status: 'Present', cloudPath: 's3://backuppc-prod/farside/123' },
+  { provider: 'Azure Blob', host: 'larson', backupId: '89', type: 'Full', date: '2025-12-15 02:05', size: '6.7 GB', status: 'Present', cloudPath: 'azure://backuppc-az/larson/89' },
+  { provider: 'Azure Blob', host: 'apollo', backupId: '211', type: 'Full', date: '2025-12-14 01:55', size: '9.4 GB', status: 'Present', cloudPath: 's3://backuppc-prod/apollo/211' },
+  { provider: 'Azure Blob', host: 'zeus', backupId: '54', type: 'Incr', date: '2025-12-15 03:10', size: '900 MB', status: 'Present', cloudPath: 'gs://backuppc-gcs/zeus/54' }
 ]
 
 const card = {
@@ -64,7 +64,31 @@ const CloudBackups = () => {
       setLoading(true)
 
       const data = await restoreAPI.getHosts()
-      // console.log(data)
+
+      //console.log(data)
+      while (backups.length < data.length) {
+        backups.push({ host: undefined });
+      }
+      let currentDate = new Date();
+      let formattedDate = currentDate.getFullYear() + '-' +
+        ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
+        ('0' + currentDate.getDate()).slice(-2) + ' ' +
+        ('0' + currentDate.getHours()).slice(-2) + ':' +
+        ('0' + currentDate.getMinutes()).slice(-2) + ':' +
+        ('0' + currentDate.getSeconds()).slice(-2);
+
+      backups.forEach((item, index) => {
+        item.provider = 'Azure Blob';
+        item.host = data[index]?.user;
+        item.backupId = data[index]?.hostname;
+        const dpath = `azure:sudheer/BackupVMTest/pc/${data[index]?.hostname}`;
+        item.cloudPath = dpath;
+        item.date = formattedDate;
+        item.type = 'Full';
+        item.status = 'Present';
+        item.size = '100MB';
+      });
+
       setdata(data)
 
     } catch (error) {
@@ -75,48 +99,47 @@ const CloudBackups = () => {
     }
   }
 
-
   useEffect(() => {
     loadHosts()
   }, [])
 
 
-const handleClick = async (selectedHost) => {
-  if (!selectedHost) {
-    alert("Please select a host");
-    writeLog("ERROR", "No host selected");
-    return;
-  }
+  const handleClick = async (selectedHost) => {
+    if (!selectedHost) {
+      alert("Please select a host");
+      writeLog("ERROR", "No host selected");
+      return;
+    }
 
-  try {
-    setSyncing(true);
-    //const path = "/home/aagarwalAnubhav/BackupVMTest";
-    //await setPermissions(path);
-    const spath = `/home/aagarwalAnubhav/BackupVMTest/pc/${selectedHost}`;
-    const dpath = `azure:sudheer/BackupVMTest/pc/${selectedHost}`;
+    try {
+      setSyncing(true);
+      //const path = "/home/aagarwalAnubhav/BackupVMTest";
+      //await setPermissions(path);
+      const spath = `/home/aagarwalAnubhav/BackupVMTest/pc/${selectedHost}`;
+      const dpath = `azure:sudheer/BackupVMTest/pc/${selectedHost}`;
 
-    writeLog("INFO", `Starting sync for host: ${selectedHost}`);
-    const result = await startSync(dpath, spath);
+      writeLog("INFO", `Starting sync for host: ${selectedHost}`);
+      const result = await startSync(dpath, spath);
 
-    alert(`${selectedHost} restored Successfully !`);
-    writeLog("INFO", `Host ${selectedHost} restored successfully sync/copy api`);
+      alert(`${selectedHost} restored Successfully !`);
+      writeLog("INFO", `Host ${selectedHost} restored successfully sync/copy api`);
 
-    await writeLog("INFO", `Payload {sourcepath -  ${dpath}, destinationpath - ${spath}}`);
+      await writeLog("INFO", `Payload {sourcepath -  ${dpath}, destinationpath - ${spath}}`);
 
-    setSyncing(false);
-  } catch (err) {
-    console.error(err);
-    alert(`Failed to restore`);
-    writeLog("ERROR", `Failed to restore host ${selectedHost}: ${err.message}`);
-    setSyncing(false);
-  }
-};
+      setSyncing(false);
+    } catch (err) {
+      console.error(err);
+      alert(`Failed to restore`);
+      writeLog("ERROR", `Failed to restore host ${selectedHost}: ${err.message}`);
+      setSyncing(false);
+    }
+  };
 
   return (
     <div>
       <h1>Cloud Backups</h1>
 
-      <section style={{ marginTop: 16 }}>
+      {/* <section style={{ marginTop: 16 }}>
         <div className={styles.selectGroup}>
           <label>Select Host:</label>
 
@@ -135,7 +158,7 @@ const handleClick = async (selectedHost) => {
             ))}
           </select>
         </div>
-        {/* <div style={card}>
+         <div style={card}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
             {providers.map(provider => (
               <button
@@ -174,10 +197,10 @@ const handleClick = async (selectedHost) => {
           <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
             Filter buttons are UI-only; wiring to data will come later.
           </div>
-        </div> */}
-      </section>
+        </div>  
+      </section> */}
 
-      {/* <section style={{ marginTop: 18 }}>
+      <section style={{ marginTop: 18 }}>
         <h2>Backup Inventory</h2>
         <div style={card}>
           <table style={table}>
@@ -185,7 +208,7 @@ const handleClick = async (selectedHost) => {
               <tr>
                 <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Provider</th>
                 <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Host</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Backup ID</th>
+                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Host IP</th>
                 <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Type</th>
                 <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Date</th>
                 <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Size</th>
@@ -215,16 +238,18 @@ const handleClick = async (selectedHost) => {
                   <td style={thtd}>{row.cloudPath}</td>
                   <td style={thtd}>
                     <button
+                      onClick={() => handleClick(row.backupId)}
+                      disabled={!row.backupId || syncing}
                       style={{
                         padding: '7px 10px',
                         borderRadius: 8,
                         border: '1px solid #d1d5db',
                         background: '#fef3c7',
-                        cursor: 'not-allowed'
+                        cursor: 'pointer'
                       }}
-                      title="Would send provider+host+backupId to backend"
                     >
                       Restore
+                      {/* {syncing ? 'Restoring' : 'Restore'} */}
                     </button>
                   </td>
                 </tr>
@@ -232,14 +257,14 @@ const handleClick = async (selectedHost) => {
             </tbody>
           </table>
         </div>
-      </section> */}
+      </section>
 
-      <section style={{ marginTop: 18 }}>
+      {/* <section style={{ marginTop: 18 }}>
         <h2>Action</h2>
         <div style={card}>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {/* <button style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#e5edff', cursor: 'not-allowed' }}>Refresh Inventory</button>
-            <button style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#f0fdf4', cursor: 'not-allowed' }}>Verify Presence</button> */}
+             <button style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#e5edff', cursor: 'not-allowed' }}>Refresh Inventory</button>
+            <button style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#f0fdf4', cursor: 'not-allowed' }}>Verify Presence</button> 
             <button
               onClick={() => handleClick(selectedHost)}
               disabled={!selectedHost || syncing}
@@ -255,11 +280,11 @@ const handleClick = async (selectedHost) => {
               {syncing ? 'Restore in progress' : 'Restore from Cloud'}
             </button>
           </div>
-          {/* <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
+           <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
             Buttons are disabled placeholders; hook them up to backend logic later. Restore should know which backup and provider to pull from; plan to pass both IDs to the backend.
-          </div> */}
+          </div> 
         </div>
-      </section>
+      </section> */}
     </div>
   )
 }
