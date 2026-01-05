@@ -206,15 +206,15 @@ const CloudBackups = () => {
           <table style={table}>
             <thead>
               <tr>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Provider</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Host</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Host IP</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Type</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Date</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Size</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Status</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Cloud Path</th>
-                <th style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>Restore</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Provider</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Host</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Host IP</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Type</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Date</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Size</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Status</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Cloud Path</th>
+                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Restore</th>
               </tr>
             </thead>
             <tbody>

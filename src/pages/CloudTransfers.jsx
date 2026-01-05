@@ -154,7 +154,7 @@ const CloudTransfers = () => {
             <thead>
               <tr>
                 {['Host', 'Type', 'Size', 'Duration', 'Ended', 'Status', 'Message'].map(h => (
-                  <th key={h} style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>{h}</th>
+                  <th key={h} style={{ ...thtd, color: 'black', fontWeight: 600 }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -187,7 +187,7 @@ const CloudTransfers = () => {
             <thead>
               <tr>
                 {['Name', 'Cron', 'Scope', 'Next Run'].map(h => (
-                  <th key={h} style={{ ...thtd, color: '#6b7280', fontWeight: 600 }}>{h}</th>
+                  <th key={h} style={{ ...thtd, color: 'black', fontWeight: 600 }}>{h}</th>
                 ))}
               </tr>
             </thead>
