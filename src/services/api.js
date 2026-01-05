@@ -7,6 +7,7 @@ const BASE_URL_CLOUD = "https://occupation-notified-photo-gif.trycloudflare.com"
 const BASE_URL_LOG = "https://bridges-packages-prices-ottawa.trycloudflare.com"//"http://127.0.0.1:8085";
 const BASE_URL_READLOG = "https://beef-printer-dealing-die.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://cause-merge-vcr-sticker.trycloudflare.com"//"http://127.0.0.1:8084";
+const BASE_URL_SETTING = "http://localhost:8088";
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -429,3 +430,24 @@ export const getJobStatus = (jobid) =>
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ jobid }),
   });
+
+ 
+export async function getProviders() {
+  const res = await fetch(`${BASE_URL_SETTING}/get-cloud-configurations`);
+  if (!res.ok) throw new Error("Failed to fetch providers");
+  return res.json();
+}
+
+export async function saveProvider(payload) {
+  const res = await fetch(`${BASE_URL_SETTING}/save-cloud-settings`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams(payload).toString(),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Save failed");
+  return data;
+}

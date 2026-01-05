@@ -92,6 +92,7 @@ const CloudTransfers = () => {
       return;
     }
     try {
+      alert(`${selectedHost} sync started`);
       setSyncing(true);
       const path = "/home/aagarwalAnubhav/BackupVMTest";
       await setPermissions(path);

@@ -84,7 +84,7 @@ const CloudBackups = () => {
         const dpath = `azure:sudheer/BackupVMTest/pc/${data[index]?.hostname}`;
         item.cloudPath = dpath;
         item.date = formattedDate;
-        item.type = 'Full';
+        //item.type = 'Full';
         item.status = 'Present';
         item.size = '100MB';
       });
@@ -112,7 +112,8 @@ const CloudBackups = () => {
     }
 
     try {
-      setSyncing(true);
+      alert(`${selectedHost} restore started`);
+      //setSyncing(true);
       //const path = "/home/aagarwalAnubhav/BackupVMTest";
       //await setPermissions(path);
       const spath = `/home/aagarwalAnubhav/BackupVMTest/pc/${selectedHost}`;
@@ -126,12 +127,12 @@ const CloudBackups = () => {
 
       await writeLog("INFO", `Payload {sourcepath -  ${dpath}, destinationpath - ${spath}}`);
 
-      setSyncing(false);
+      //setSyncing(false);
     } catch (err) {
       console.error(err);
       alert(`Failed to restore`);
       writeLog("ERROR", `Failed to restore host ${selectedHost}: ${err.message}`);
-      setSyncing(false);
+      //setSyncing(false);
     }
   };
 
