@@ -275,9 +275,9 @@ const CloudSettings = () => {
               <input disabled style={input} placeholder="4" />
             </label>
           </div>
-          <div style={{ marginTop: 10, ...hint }}>
+          {/* <div style={{ marginTop: 10, ...hint }}>
             Values are static; connect to backend settings later.
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -308,9 +308,9 @@ const CloudSettings = () => {
               <input disabled style={input} placeholder="50" />
             </label>
           </div>
-          <div style={{ marginTop: 10, ...hint }}>
+          {/* <div style={{ marginTop: 10, ...hint }}>
             Cron and window are UI-only; backend will enforce schedule later.
-          </div>
+          </div> */}
         </div>
       </section>
 
