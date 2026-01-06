@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { restoreAPI, startSync, writeLog, setPermissions } from '../services/api'
+import { restoreAPI, startSync, writeLog, setPermissions, getTransferredWithHosts } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -58,6 +58,8 @@ const CloudBackups = () => {
   const [selectedHost, setSelectedHost] = useState('')
   const [a, setdata] = useState([])
   const [syncing, setSyncing] = useState(false);
+  const [transfers, setTransfers] = useState([]);
+  const safeNumber = (v) => Math.max(0, Number(v) || 0);
 
   const loadHosts = async () => {
     try {
@@ -77,16 +79,22 @@ const CloudBackups = () => {
         ('0' + currentDate.getMinutes()).slice(-2) + ':' +
         ('0' + currentDate.getSeconds()).slice(-2);
 
+      const formatDateTime = (iso) => {
+        if (!iso) return "-";
+
+        return iso.split(".")[0].replace("T", " ");
+      };
+
       backups.forEach((item, index) => {
         item.provider = 'Azure Blob';
         item.host = data[index]?.user;
         item.backupId = data[index]?.hostname;
         const dpath = `azure:sudheer/BackupVMTest/pc/${data[index]?.hostname}`;
         item.cloudPath = dpath;
-        item.date = formattedDate;
+        item.date = formatDateTime(transfers[index]?.started_at)//formattedDate;
         //item.type = 'Full';
         item.status = 'Present';
-        item.size = '100MB';
+        item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
       });
 
       setdata(data)
@@ -100,9 +108,24 @@ const CloudBackups = () => {
   }
 
   useEffect(() => {
-    loadHosts()
-  }, [])
+    const loadData = async () => {
+      try {
+        const data = await getTransferredWithHosts();
+        setTransfers(data);
+        //console.log(data);
+      } catch (err) {
+        console.error("Failed to load transfers", err);
+      }
+    };
 
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    if (transfers.length === 0) return;
+
+    loadHosts();
+  }, [transfers]);
 
   const handleClick = async (selectedHost) => {
     if (!selectedHost) {

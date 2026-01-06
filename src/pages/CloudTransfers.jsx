@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync, restoreAPI, writeLog, setPermissions } from '../services/api'
+import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -51,23 +51,38 @@ const CloudTransfers = () => {
   const [selectedHost, setSelectedHost] = useState('')
   const [a, setdata] = useState([])
   const [syncing, setSyncing] = useState(false);
-
+  const [transfers, setTransfers] = useState([]);
+  const [stats, setStats] = useState([]);
+  const safeNumber = (v) => Math.max(0, Number(v) || 0);
 
   const loadHosts = async () => {
     try {
       setLoading(true)
 
       const data = await restoreAPI.getHosts()
+
+      const getStatValue = (stats, label) => {
+        const item = stats.find(s => s.label === label);
+        return Math.max(0, Number(item?.value || 0));
+      };
+
       // console.log(data)
       while (recent.length < data.length) {
         recent.push({ host: undefined });
       }
+
+      const formatDateTime = (iso) => {
+        if (!iso) return "-";
+
+        return iso.split(".")[0].replace("T", " ");
+      };
+
       recent.forEach((item, index) => {
         item.host = data[index]?.user;
-        item.duration = '14ms';
-        item.ended = '02:15';
-        item.message = 'Uploaded 38 objects';
-        item.size = '100MB';
+        item.duration = `${getStatValue(stats, "elapsedTime").toFixed(0)} ms`;//'14ms';
+        item.ended = formatDateTime(transfers[index]?.completed_at)//'02:15';
+        item.message = `Uploaded ${safeNumber(transfers[index]?.size || 0)} objects`;
+        item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
         item.status = 'Success';
         item.type = 'Full';
       });
@@ -83,8 +98,45 @@ const CloudTransfers = () => {
   }
 
   useEffect(() => {
-    loadHosts()
-  }, [])
+    const loadData = async () => {
+      try {
+        const data = await getTransferredWithHosts();
+        setTransfers(data);
+        // console.log(data);
+      } catch (err) {
+        console.error("Failed to load transfers", err);
+      }
+    };
+
+    loadData();
+  }, []);
+
+
+  useEffect(() => {
+    const loadData1 = async () => {
+      try {
+        const data = await getRcloneStats();
+
+        const statsArray = Object.entries(data).map(([key, value]) => ({
+          label: key,
+          value
+        }));
+
+        setStats(statsArray);
+        // console.log(statsArray);
+      } catch (err) {
+        console.error("Failed to load stats", err);
+      }
+    };
+
+    loadData1();
+  }, []);
+
+  useEffect(() => {
+    if (stats.length === 0 || transfers.length === 0) return;
+
+    loadHosts();
+  }, [stats, transfers]);
 
   const handleClick = async (selectedHost) => {
     if (!selectedHost) {

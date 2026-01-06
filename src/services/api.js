@@ -29,7 +29,7 @@ export async function fetchLog() {
   if (!response.ok) {
     throw new Error("Failed to fetch log");
   }
-  return response.text(); 
+  return response.text();
 }
 // set permission
 export async function setPermissions(dir) {
@@ -39,7 +39,7 @@ export async function setPermissions(dir) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({dir : dir}) 
+      body: JSON.stringify({ dir: dir })
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -406,7 +406,7 @@ const request = async (url, options) => {
   return res.json();
 };
 
-export const startSync = (spath,dpath) =>
+export const startSync = (spath, dpath) =>
   request("/sync/copy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -415,10 +415,10 @@ export const startSync = (spath,dpath) =>
       srcFs: spath,
       dstFs: dpath,
       opt: {
-        no_update_dir_modtime: true,   
-        create_empty_src_dirs: true,   
-        ignore_existing: false,        
-        retries: 3    
+        no_update_dir_modtime: true,
+        create_empty_src_dirs: true,
+        ignore_existing: false,
+        retries: 3
       }
     })
 
@@ -431,7 +431,33 @@ export const getJobStatus = (jobid) =>
     body: JSON.stringify({ jobid }),
   });
 
- 
+export const getRcloneStats = () =>
+  request("/core/stats", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({})
+  });
+
+export const getTransferred = () =>
+  request("/core/transferred", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({})
+  });
+
+export const getTransferredWithHosts = async () => {
+  const res = await getTransferred();
+   //console.log(res)
+  return res.transferred.map(t => ({
+    file: t.name,
+    size: t.size,
+    status: t.error ? "Failed" : "OK",
+    job: t.group,
+    completed_at: t.completed_at,
+    started_at: t.started_at
+  }));
+};
+
 export async function getProviders() {
   const res = await fetch(`${BASE_URL_SETTING}/get-cloud-configurations`);
   if (!res.ok) throw new Error("Failed to fetch providers");
