@@ -9,6 +9,8 @@ const BASE_URL_READLOG = "https://beef-printer-dealing-die.trycloudflare.com"//"
 const BASE_URL_PERMISSION = "https://cause-merge-vcr-sticker.trycloudflare.com"//"http://127.0.0.1:8084";
 const BASE_URL_SETTING = "https://knights-lined-herself-tom.trycloudflare.com"//"http://127.0.0.1:8088";
 const BASE_URL_SCHEDULE = "https://new-floating-accepting-title.trycloudflare.com"//"http://127.0.0.1:5000";
+const BASE_URL_UPDATE = "https://hire-oklahoma-thermal-antibody.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
+
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -485,4 +487,21 @@ export const saveSchedule = async (schedule) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(schedule)
   });
+};
+
+export const updateProvider = async (providerName, form) => {
+  const res = await fetch(`${BASE_URL_UPDATE}/${providerName}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(form),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err || "Failed to update provider");
+  }
+
+  return res.json();
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProviders, saveProvider } from '../services/api';
+import { getProviders, saveProvider, updateProvider } from '../services/api';
 
 const card = {
   padding: '14px 16px',
@@ -50,15 +50,48 @@ const CloudSettings = () => {
   const [providersList, setProvidersList] = useState([]);
 
   const [form, setForm] = useState({
-    provider: "AWS_S3",
+    provider: "",
     bucketName: "",
     region: "",
     accessKey: "",
     secretKey: "",
   });
+
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingProvider, setEditingProvider] = useState(null);
+
   useEffect(() => {
     loadProviders();
   }, []);
+
+  const PROVIDER_TYPE_MAP = {
+    s3: "AWS_S3",
+    aws_s3: "AWS_S3",
+
+    azureblob: "AZURE_BLOB",
+    azure_blob: "AZURE_BLOB",
+
+    gcs: "GCS",
+
+    drive: "GDRIVE",
+    gdrive: "GDRIVE",
+
+    s3compat: "S3_COMPAT",
+    s3_compatible: "S3_COMPAT",
+  };
+
+  const handleEdit = (p) => {
+    setForm({
+      provider: PROVIDER_TYPE_MAP[p.type?.toLowerCase()] || "",
+      bucketName: p.bucket || "",
+      region: p.region || "",
+      accessKey: "",
+      secretKey: "",
+    });
+
+    setEditingProvider(p.name);
+    setIsEdit(true);
+  };
 
   async function loadProviders() {
     try {
@@ -91,6 +124,21 @@ const CloudSettings = () => {
       alert(err.message);
     }
   }
+
+  const handleUpdate = async () => {
+    try {
+      await updateProvider(editingProvider, form);
+      alert("Provider update successfully");
+      setIsEdit(false);
+      setEditingProvider(null);
+      loadProviders();
+      
+    } catch (err) {
+      alert(err.message);
+      console.log(err.message);
+    }
+  };
+
   return (
     <div>
       <h1>Cloud Settings</h1>
@@ -127,6 +175,7 @@ const CloudSettings = () => {
                 <th style={th}>Bucket / Container</th>
                 <th style={th}>Region / Endpoint</th>
                 <th style={th}>Status</th>
+                <th style={th}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -146,6 +195,21 @@ const CloudSettings = () => {
                   >
                     {p.status}
                   </td>
+                  <td style={td}>
+                    <button
+                      style={{
+                        padding: "4px 8px",
+                        borderRadius: 6,
+                        border: "1px solid #d1d5db",
+                        cursor: "pointer",
+                        background: "#fef3c7",
+                      }}
+                      onClick={() => handleEdit(p)}
+                    >
+                      Edit
+                    </button>
+                  </td>
+
                 </tr>
               ))}
               {providersList.length === 0 && (
@@ -180,6 +244,7 @@ const CloudSettings = () => {
                 <option value="GCS">GCS</option>
                 <option value="GDRIVE">GDrive</option>
                 <option value="S3_COMPAT">S3-compatible</option>
+
               </select>
             </label>
 
@@ -239,13 +304,14 @@ const CloudSettings = () => {
                 padding: "9px 12px",
                 borderRadius: 8,
                 border: "1px solid #d1d5db",
-                background: "#e5edff",
+                background: isEdit ? "#fde68a" : "#e5edff",
                 cursor: "pointer",
               }}
-              onClick={handleSave}
+              onClick={isEdit ? handleUpdate : handleSave}
             >
-              + Add Provider
+              {isEdit ? "Update Provider" : "+ Add Provider"}
             </button>
+
           </div>
         </div>
       </section>
