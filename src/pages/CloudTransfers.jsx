@@ -67,7 +67,7 @@ const CloudTransfers = () => {
 
   const [schedule, setSchedule] = useState([
     {
-      name: 'Rclone Backup',
+      name: 'Cloud Backup',
       cron: '*-*-* 02:00:00',
       scope: 'system',
       nextRun: 'Tomorrow 02:00 AM'
@@ -291,7 +291,7 @@ const CloudTransfers = () => {
           >
             <thead>
               <tr>
-                {['Name', 'Schedule (OnCalendar)', 'Scope', 'Next Run'].map(h => (
+                {['Name', 'Schedule', 'Scope', 'Next Run'].map(h => (
                   <th
                     key={h}
                     style={{
@@ -336,7 +336,7 @@ const CloudTransfers = () => {
                       onChange={e => updateRow(i, 'scope', e.target.value)}
                     >
                       <option value="system">System</option>
-                      <option value="user">User</option>
+                      {/* <option value="user">User</option> */}
                     </select>
                   </td>
 
