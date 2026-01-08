@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats } from '../services/api'
+import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -16,6 +16,16 @@ const schedule = [
   // { name: 'Host override: larson', cron: '30 3 * * 1-6', scope: 'Host larson (custom)', nextRun: 'Tomorrow 03:30' },
   // { name: 'Host override: zeus', cron: '15 1 * * 0', scope: 'Host zeus (custom)', nextRun: 'Sun 01:15' }
 ]
+
+const inputStyle = {
+  width: '100%',
+  padding: '6px 8px',
+  fontSize: 14,
+  border: '1px solid #ccc',
+  borderRadius: 4,
+  outline: 'none',
+  boxSizing: 'border-box'
+};
 
 const card = {
   padding: '14px 16px',
@@ -54,6 +64,34 @@ const CloudTransfers = () => {
   const [transfers, setTransfers] = useState([]);
   const [stats, setStats] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
+
+  const [schedule, setSchedule] = useState([
+    {
+      name: 'Rclone Backup',
+      cron: '*-*-* 02:00:00',
+      scope: 'system',
+      nextRun: 'Tomorrow 02:00 AM'
+    }
+  ]);
+
+  const updateRow = (index, field, value) => {
+    setSchedule(prev => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  };
+
+  const handleSaveSchedule = async () => {
+  const res = await saveSchedule(schedule);
+
+  if (res.ok) {
+    alert('Schedule saved successfully');
+  } else {
+    alert('Save failed');
+  }
+};
+
 
   const loadHosts = async () => {
     try {
@@ -234,29 +272,116 @@ const CloudTransfers = () => {
 
       {/* Scheduled Jobs */}
       <section style={{ marginTop: 18 }}>
-        <h2>Scheduled Jobs</h2>
-        <div style={card}>
-          <table style={table}>
+        <h2 style={{ marginBottom: 12 }}>Scheduled Jobs</h2>
+
+        <div
+          style={{
+            background: '#fff',
+            borderRadius: 8,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            overflowX: 'auto'
+          }}
+        >
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              minWidth: 800
+            }}
+          >
             <thead>
               <tr>
-                {['Name', 'Cron', 'Scope', 'Next Run'].map(h => (
-                  <th key={h} style={{ ...thtd, color: 'black', fontWeight: 600 }}>{h}</th>
+                {['Name', 'Schedule (OnCalendar)', 'Scope', 'Next Run'].map(h => (
+                  <th
+                    key={h}
+                    style={{
+                      textAlign: 'left',
+                      padding: '12px 10px',
+                      background: '#f5f7fa',
+                      fontWeight: 600,
+                      fontSize: 14,
+                      borderBottom: '1px solid #ddd'
+                    }}
+                  >
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
+
             <tbody>
-              {schedule.map(row => (
-                <tr key={row.name}>
-                  <td style={thtd}>{row.name}</td>
-                  <td style={thtd}>{row.cron}</td>
-                  <td style={thtd}>{row.scope}</td>
-                  <td style={thtd}>{row.nextRun}</td>
+              {schedule.map((row, i) => (
+                <tr key={i}>
+                  <td style={{ padding: 8 }}>
+                    <input
+                      style={inputStyle}
+                      value={row.name}
+                      onChange={e => updateRow(i, 'name', e.target.value)}
+                    />
+                  </td>
+
+                  <td style={{ padding: 8 }}>
+                    <input
+                      style={inputStyle}
+                      value={row.cron}
+                      onChange={e => updateRow(i, 'cron', e.target.value)}
+                      placeholder="*-*-* 02:00:00"
+                    />
+                  </td>
+
+                  <td style={{ padding: 8 }}>
+                    <select
+                      style={inputStyle}
+                      value={row.scope}
+                      onChange={e => updateRow(i, 'scope', e.target.value)}
+                    >
+                      <option value="system">System</option>
+                      <option value="user">User</option>
+                    </select>
+                  </td>
+
+                  <td style={{ padding: 8 }}>
+                    <input
+                      style={{
+                        ...inputStyle,
+                        background: '#f0f0f0',
+                        color: '#666',
+                        cursor: 'not-allowed'
+                      }}
+                      value={row.nextRun}
+                      disabled
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          <div
+            style={{
+              padding: 12,
+              borderTop: '1px solid #eee',
+              textAlign: 'right'
+            }}
+          >
+            <button
+              onClick={handleSaveSchedule}
+              style={{
+                padding: '8px 16px',
+                background: '#2563eb',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: 500,
+                cursor: 'pointer'
+              }}
+            >
+              Save Schedule
+            </button>
+          </div>
         </div>
       </section>
+
 
       {/* Manual Actions */}
       <section style={{ marginTop: 18 }}>

@@ -8,6 +8,7 @@ const BASE_URL_LOG = "https://bridges-packages-prices-ottawa.trycloudflare.com"/
 const BASE_URL_READLOG = "https://beef-printer-dealing-die.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://cause-merge-vcr-sticker.trycloudflare.com"//"http://127.0.0.1:8084";
 const BASE_URL_SETTING = "https://knights-lined-herself-tom.trycloudflare.com"//"http://127.0.0.1:8088";
+const BASE_URL_SCHEDULE = "https://new-floating-accepting-title.trycloudflare.com"//"http://127.0.0.1:5000";
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -477,3 +478,11 @@ export async function saveProvider(payload) {
   if (!res.ok) throw new Error(data.message || "Save failed");
   return data;
 }
+
+export const saveSchedule = async (schedule) => {
+  return await fetch(`${BASE_URL_SCHEDULE}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(schedule)
+  });
+};
