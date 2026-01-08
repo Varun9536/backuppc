@@ -231,7 +231,7 @@ const CloudTransfers = () => {
 
           {a?.map((h) => (
             <option key={h.user} value={h.hostname}>
-              {h.user}
+              {h.hostname}
             </option>
           ))}
         </select>
