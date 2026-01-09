@@ -72,11 +72,11 @@ const Layout = () => {
         </div>
 
         <div style={{display:'flex',gap:"0px 10px"}}>
-          {role === userRoles.level2 && (
+          {/* {role === userRoles.level2 && (
             <div onClick={handleHelp} className={styles.userBadgeHelp}>
               {showHelp ? "Close Help" : "Help"}
             </div>
-          )}
+          )} */}
 
           <div onClick={handleLogout} className={styles.userBadge}>
             Logout
