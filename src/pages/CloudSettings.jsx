@@ -101,6 +101,21 @@ const CloudSettings = () => {
       console.error(err);
     }
   }
+  const handleClear = async () => {
+    await loadProviders(); // reload table data
+
+    setForm({
+      provider: "Select Provider",
+      bucketName: "",
+      region: "",
+      accessKey: "",
+      secretKey: "",
+    });
+
+    setEditingProvider(null); // remove row highlight
+    setIsEdit(false);
+  };
+
   async function handleSave() {
     try {
       await saveProvider({
@@ -112,7 +127,7 @@ const CloudSettings = () => {
       });
 
       setForm({
-        provider: "AWS_S3",
+        provider: "Select Provider",
         bucketName: "",
         region: "",
         accessKey: "",
@@ -132,7 +147,7 @@ const CloudSettings = () => {
       setIsEdit(false);
       setEditingProvider(null);
       loadProviders();
-      
+
     } catch (err) {
       alert(err.message);
       console.log(err.message);
@@ -180,7 +195,18 @@ const CloudSettings = () => {
             </thead>
             <tbody>
               {providersList.map((p) => (
-                <tr key={p.name}>
+                <tr
+                  key={p.name}
+                  style={{
+                    backgroundColor:
+                      editingProvider === p.name ? "#dbeafe" : "transparent", // light blue
+                    boxShadow:
+                      editingProvider === p.name
+                        ? "0 0 0 1px #60a5fa inset"
+                        : "none",
+                    transition: "0.2s",
+                  }}
+                >
                   <td style={td}>{p.name}</td>
                   <td style={td}>{p.type}</td>
                   <td style={td}>{p.bucket}</td>
@@ -188,8 +214,7 @@ const CloudSettings = () => {
                   <td
                     style={{
                       ...td,
-                      color:
-                        p.status === "Healthy" ? "#16a34a" : "#6b7280",
+                      color: p.status === "Healthy" ? "#16a34a" : "#6b7280",
                       fontWeight: 600,
                     }}
                   >
@@ -202,16 +227,17 @@ const CloudSettings = () => {
                         borderRadius: 6,
                         border: "1px solid #d1d5db",
                         cursor: "pointer",
-                        background: "#fef3c7",
+                        background:
+                          editingProvider === p.name ? "#93c5fd" : "#fef3c7",
                       }}
                       onClick={() => handleEdit(p)}
                     >
                       Edit
                     </button>
                   </td>
-
                 </tr>
               ))}
+
               {providersList.length === 0 && (
                 <tr>
                   <td colSpan={5} style={{ ...td, textAlign: "center" }}>
@@ -239,6 +265,7 @@ const CloudSettings = () => {
                   setForm({ ...form, provider: e.target.value })
                 }
               >
+                <option value="">Select Provider</option>
                 <option value="AWS_S3">AWS S3</option>
                 <option value="AZURE_BLOB">Azure Blob</option>
                 <option value="GCS">GCS</option>
@@ -256,7 +283,7 @@ const CloudSettings = () => {
                 onChange={(e) =>
                   setForm({ ...form, bucketName: e.target.value })
                 }
-                placeholder="backuppc-prod"
+                placeholder=""
               />
             </label>
 
@@ -268,7 +295,7 @@ const CloudSettings = () => {
                 onChange={(e) =>
                   setForm({ ...form, region: e.target.value })
                 }
-                placeholder="us-east-1 or https://minio.local"
+                placeholder=""
               />
             </label>
 
@@ -280,7 +307,7 @@ const CloudSettings = () => {
                 onChange={(e) =>
                   setForm({ ...form, accessKey: e.target.value })
                 }
-                placeholder="AKIA..."
+                placeholder=""
               />
             </label>
 
@@ -296,6 +323,20 @@ const CloudSettings = () => {
                 placeholder="••••••••"
               />
             </label>
+            <button
+              style={{
+               // padding: "9px 12px",
+                width:"5rem",
+                height:"2rem",
+                borderRadius: 8,
+                border: "1px solid #d1d5db",
+                background: "#e5edff",
+                cursor: "pointer",
+              }}
+              onClick={handleClear}
+            >
+              Clear
+            </button>
           </div>
 
           <div style={{ marginTop: 10 }}>

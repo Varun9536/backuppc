@@ -68,7 +68,7 @@ const CloudTransfers = () => {
   const [schedule, setSchedule] = useState([
     {
       name: 'Cloud Backup',
-      cron: '*-*-* 02:00:00',
+      cron: '0 2 * * *',
       scope: 'system',
       nextRun: 'Tomorrow 02:00 AM'
     }
