@@ -83,14 +83,14 @@ const CloudTransfers = () => {
   };
 
   const handleSaveSchedule = async () => {
-  const res = await saveSchedule(schedule);
+    const res = await saveSchedule(schedule);
 
-  if (res.ok) {
-    alert('Schedule saved successfully');
-  } else {
-    alert('Save failed');
-  }
-};
+    if (res.ok) {
+      alert('Schedule saved successfully');
+    } else {
+      alert('Save failed');
+    }
+  };
 
 
   const loadHosts = async () => {
@@ -115,10 +115,18 @@ const CloudTransfers = () => {
         return iso.split(".")[0].replace("T", " ");
       };
 
+      let currentDate = new Date();
+      let formattedDate = currentDate.getFullYear() + '-' +
+        ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
+        ('0' + currentDate.getDate()).slice(-2) + ' ' +
+        ('0' + currentDate.getHours()).slice(-2) + ':' +
+        ('0' + currentDate.getMinutes()).slice(-2) + ':' +
+        ('0' + currentDate.getSeconds()).slice(-2);
+
       recent.forEach((item, index) => {
         item.host = data[index]?.user;
         item.duration = `${getStatValue(stats, "elapsedTime").toFixed(0)} ms`;//'14ms';
-        item.ended = formatDateTime(transfers[index]?.completed_at)//'02:15';
+        item.ended = formattedDate;//formatDateTime(transfers[index]?.completed_at)//'02:15';
         item.message = `Uploaded ${safeNumber(transfers[index]?.size || 0)} objects`;
         item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
         item.status = 'Success';

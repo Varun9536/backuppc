@@ -115,6 +115,7 @@ const CreateHost = () => {
           value={formData.user}
           onChange={handleChange}
           placeholder="username"
+          required
         />
 
         {/* <label htmlFor="moreUsers">Additional Users (comma separated):</label>

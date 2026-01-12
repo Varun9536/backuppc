@@ -91,7 +91,7 @@ const CloudBackups = () => {
         item.backupId = data[index]?.hostname;
         const dpath = `azure:sudheer/BackupVMTest/pc/${data[index]?.hostname}`;
         item.cloudPath = dpath;
-        item.date = formatDateTime(transfers[index]?.started_at)//formattedDate;
+        item.date = formattedDate //formatDateTime(transfers[index]?.started_at);
         //item.type = 'Full';
         item.status = 'Present';
         item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
