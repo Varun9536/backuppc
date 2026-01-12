@@ -46,28 +46,28 @@ const CreateHost = () => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'retentionFull' || name === 'retentionIncr' 
-        ? Number(value) || 0 
+      [name]: name === 'retentionFull' || name === 'retentionIncr'
+        ? Number(value) || ''
         : value
     }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-   // console.log("formdata " , "create" , formData)
+    // console.log("formdata " , "create" , formData)
     try {
-    setSaving(true)
-     const data = await hostsAPI.save(formData);
-     //console.log(data)
-     if(data?.success == 1){
-      alert(data?.message);
-     }
-     else if(data?.error.length > 1){
-      alert(data?.error);
-     }
-    
-    //   refreshHosts()
-    //   navigate('/hosts')
+      setSaving(true)
+      const data = await hostsAPI.save(formData);
+      //console.log(data)
+      if (data?.success == 1) {
+        alert(data?.message);
+      }
+      else if (data?.error.length > 1) {
+        alert(data?.error);
+      }
+
+      //   refreshHosts()
+      //   navigate('/hosts')
     } catch (error) {
       console.error('Error saving host:', error)
       alert('Failed to save host configuration')
@@ -94,7 +94,9 @@ const CreateHost = () => {
           placeholder="127.0.0.1"
           required
           disabled={!!hostname}
-          maxLength={20}
+          maxLength={15}
+          pattern="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
+          title="Enter valid IP address like 127.0.0.1"
         />
 
         <label htmlFor="dhcpFlag">DHCP Flag (Is host DHCP?) *:</label>
@@ -136,7 +138,7 @@ const CreateHost = () => {
           name="xferMethod"
           value={formData.xferMethod}
           onChange={handleChange}
-        >       
+        >
           <option value="smb">SMB/CIFS</option>
           <option value="rsync">rsync</option>
           <option value="tar">tar</option>
@@ -171,6 +173,7 @@ const CreateHost = () => {
           value={formData.fullBackupSchedule}
           onChange={handleChange}
           placeholder="0 2 * * 0 (Every Sunday 2AM)"
+          maxLength={4}
         />
 
         <label htmlFor="incrBackupSchedule">Incremental Backup Schedule:</label>
@@ -181,27 +184,30 @@ const CreateHost = () => {
           value={formData.incrBackupSchedule}
           onChange={handleChange}
           placeholder="0 2 * * 1-6 (Mon-Sat 2AM)"
+          maxLength={4}
         />
 
-        <label htmlFor="retentionFull">Full Backup Retention (Days):</label>
+        <label htmlFor="retentionFull">Full Backup Retention (Days) *:</label>
         <input
           type="number"
           id="retentionFull"
           name="retentionFull"
           value={formData.retentionFull}
           onChange={handleChange}
-          min="1"
+          min={1}
+          max={3}
           required
         />
 
-        <label htmlFor="retentionIncr">Incremental Backup Retention (Days):</label>
+        <label htmlFor="retentionIncr">Incremental Backup Retention (Days) *:</label>
         <input
           type="number"
           id="retentionIncr"
           name="retentionIncr"
           value={formData.retentionIncr}
           onChange={handleChange}
-          min="1"
+          min={1}
+          max={3}
           required
         />
 
