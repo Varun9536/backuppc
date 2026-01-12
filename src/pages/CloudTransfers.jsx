@@ -226,25 +226,6 @@ const CloudTransfers = () => {
     <div>
       <h1>Cloud Transfers</h1>
 
-      <div className={styles.selectGroup}>
-        <label>Select Host:</label>
-
-        <select
-          value={selectedHost}
-          onChange={(e) => setSelectedHost(e.target.value)}
-        >
-          <option value="" disabled>
-            Select a host
-          </option>
-
-          {a?.map((h) => (
-            <option key={h.user} value={h.hostname}>
-              {h.hostname}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Recent Transfers  */}
       <section style={{ marginTop: 16 }}>
         <h2>Recent Transfers</h2>
@@ -394,6 +375,24 @@ const CloudTransfers = () => {
       {/* Manual Actions */}
       <section style={{ marginTop: 18 }}>
         <h2>Action</h2>
+        <div className={styles.selectGroup}>
+          <label>Select Host:</label>
+
+          <select
+            value={selectedHost}
+            onChange={(e) => setSelectedHost(e.target.value)}
+          >
+            <option value="" disabled>
+              Select a host
+            </option>
+
+            {a?.map((h) => (
+              <option key={h.user} value={h.hostname}>
+                {h.hostname}
+              </option>
+            ))}
+          </select>
+        </div>
         <div style={card}>
           <button
             onClick={() => handleClick(selectedHost)}

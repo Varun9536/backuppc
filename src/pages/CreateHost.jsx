@@ -84,7 +84,7 @@ const CreateHost = () => {
     <div className={styles.container}>
       <h1>Host Configuration</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label htmlFor="hostName">Hostname:</label>
+        <label htmlFor="hostName">Hostname *:</label>
         <input
           type="text"
           id="hostName"
@@ -94,9 +94,10 @@ const CreateHost = () => {
           placeholder="127.0.0.1"
           required
           disabled={!!hostname}
+          maxLength={20}
         />
 
-        <label htmlFor="dhcpFlag">DHCP Flag (Is host DHCP?):</label>
+        <label htmlFor="dhcpFlag">DHCP Flag (Is host DHCP?) *:</label>
         <select
           id="dhcpFlag"
           name="dhcpFlag"
@@ -107,7 +108,7 @@ const CreateHost = () => {
           <option value="1">Yes</option>
         </select>
 
-        <label htmlFor="user">User (Owner of Host):</label>
+        <label htmlFor="user">User (Owner of Host) *:</label>
         <input
           type="text"
           id="user"
@@ -116,6 +117,7 @@ const CreateHost = () => {
           onChange={handleChange}
           placeholder="username"
           required
+          maxLength={20}
         />
 
         {/* <label htmlFor="moreUsers">Additional Users (comma separated):</label>
@@ -128,7 +130,7 @@ const CreateHost = () => {
           placeholder="user1,user2"
         /> */}
 
-        <label htmlFor="xferMethod">Transfer Method:</label>
+        <label htmlFor="xferMethod">Transfer Method: *</label>
         <select
           id="xferMethod"
           name="xferMethod"
