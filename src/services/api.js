@@ -3,13 +3,13 @@
 //const BASE_URL = 'http://192.168.1.37:8081';
 
 const BASE_URL = '';
-const BASE_URL_CLOUD = "https://renewal-situated-supplement-elevation.trycloudflare.com"//"http://127.0.0.1:8082";
-const BASE_URL_LOG = "https://improve-produced-auto-absolute.trycloudflare.com"//"http://127.0.0.1:8085";
+const BASE_URL_CLOUD = "https://examined-themes-strike-get.trycloudflare.com"//"http://127.0.0.1:8082";
+const BASE_URL_LOG = "https://reflected-represent-dosage-rabbit.trycloudflare.com"//"http://127.0.0.1:8085";
 const BASE_URL_READLOG = "https://income-touched-directory-partners.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://series-services-catalog-conservation.trycloudflare.com"//"http://127.0.0.1:8084";
-const BASE_URL_SETTING = "https://cpu-tagged-myrtle-strain.trycloudflare.com"//"http://127.0.0.1:8088";
+const BASE_URL_SETTING = "https://virtue-vault-asking-schools.trycloudflare.com"//"http://127.0.0.1:8088";
 const BASE_URL_SCHEDULE = "https://mysimon-brakes-zen-registry.trycloudflare.com"//"http://127.0.0.1:5000";
-const BASE_URL_UPDATE = "https://history-realm-enforcement-notebook.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
+const BASE_URL_UPDATE = "https://ensure-keyboard-reviewed-varieties.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
 const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycloudflare.com/"//"http://127.0.0.1:5002/";
 
 // Utility delay function
