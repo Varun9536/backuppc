@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule } from '../services/api'
+import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule, getSchedularDetails } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -63,23 +63,34 @@ const CloudTransfers = () => {
   const [syncing, setSyncing] = useState(false);
   const [transfers, setTransfers] = useState([]);
   const [stats, setStats] = useState([]);
+  const [schedule, setSchedule] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
 
-  const [schedule, setSchedule] = useState([
-    {
-      name: 'Cloud Backup',
-      cron: '0 2 * * *',
-      scope: 'system',
-      nextRun: 'Tomorrow 02:00 AM'
-    }
-  ]);
+  // const [schedule, setSchedule] = useState([
+  //   {
+  //     name: 'Cloud Backup',
+  //     cron: '0 2 * * *',
+  //     scope: 'system',
+  //     next_run: 'Tomorrow 02:00 AM'
+  //   }
+  // ]);
 
-  const updateRow = (index, field, value) => {
-    setSchedule(prev => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [field]: value };
-      return copy;
-    });
+  // const updateRow = (index, field, value) => {
+
+  const updateRow = (e) => {
+    // setSchedule(prev => {
+    //   const copy = [...prev];
+    //   copy[index] = { ...copy[index], [field]: value };
+    //   return copy;
+    // });
+
+    const { name, value } = e.target;
+
+    // Set new state object with updated key or new key
+    setSchedule((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   const handleSaveSchedule = async () => {
@@ -92,10 +103,24 @@ const CloudTransfers = () => {
     }
   };
 
+  const getScheduleDetails = async () => {
+    try {
+      const data = await getSchedularDetails();   // already JSON
+
+      setSchedule(data);
+
+      // console.log(data);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to get scheduler details");
+    }
+  };
 
   const loadHosts = async () => {
     try {
       setLoading(true)
+
+      await getScheduleDetails();
 
       const data = await restoreAPI.getHosts()
 
@@ -299,50 +324,57 @@ const CloudTransfers = () => {
             </thead>
 
             <tbody>
-              {schedule.map((row, i) => (
-                <tr key={i}>
-                  <td style={{ padding: 8 }}>
-                    <input
-                      style={inputStyle}
-                      value={row.name}
-                      onChange={e => updateRow(i, 'name', e.target.value)}
-                    />
-                  </td>
+              {/* {schedule.map((row, i) => ( */}
+              <tr>
+                <td style={{ padding: 8 }}>
+                  <input
+                    style={inputStyle}
+                    value={schedule.name}
+                    onChange={updateRow}
+                    name="name"
+                  // onChange={e => updateRow(i, 'name', e.target.value)}
+                  />
+                </td>
 
-                  <td style={{ padding: 8 }}>
-                    <input
-                      style={inputStyle}
-                      value={row.cron}
-                      onChange={e => updateRow(i, 'cron', e.target.value)}
-                      placeholder="*-*-* 02:00:00"
-                    />
-                  </td>
+                <td style={{ padding: 8 }}>
+                  <input
+                    style={inputStyle}
+                    value={schedule.cron}
+                    onChange={updateRow}
+                    name="cron"
+                    // onChange={e => updateRow(i, 'cron', e.target.value)}
+                    placeholder="0 2 * * *"
+                  />
+                </td>
 
-                  <td style={{ padding: 8 }}>
-                    <select
-                      style={inputStyle}
-                      value={row.scope}
-                      onChange={e => updateRow(i, 'scope', e.target.value)}
-                    >
-                      <option value="system">System</option>
-                      {/* <option value="user">User</option> */}
-                    </select>
-                  </td>
+                <td style={{ padding: 8 }}>
+                  <select
+                    style={inputStyle}
+                    value='system'
+                    onChange={updateRow}
 
-                  <td style={{ padding: 8 }}>
-                    <input
-                      style={{
-                        ...inputStyle,
-                        background: '#f0f0f0',
-                        color: '#666',
-                        cursor: 'not-allowed'
-                      }}
-                      value={row.nextRun}
-                      disabled
-                    />
-                  </td>
-                </tr>
-              ))}
+                  // onChange={e => updateRow(i, 'scope', e.target.value)}
+                  >
+                    <option value="system">All</option>
+                    {/* <option value="user">User</option> */}
+                  </select>
+                </td>
+
+                <td style={{ padding: 8 }}>
+                  <input
+                    style={{
+                      ...inputStyle,
+                      background: '#f0f0f0',
+                      color: '#666',
+                      cursor: 'not-allowed'
+                    }}
+                    placeholder="Tomorrow 02:00 AM"
+                    value={schedule.next_run}
+                    disabled
+                  />
+                </td>
+              </tr>
+              {/* ))} */}
             </tbody>
           </table>
 

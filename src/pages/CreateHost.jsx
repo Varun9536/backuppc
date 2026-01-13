@@ -195,7 +195,7 @@ const CreateHost = () => {
           value={formData.retentionFull}
           onChange={handleChange}
           min={1}
-          max={3}
+          max={999}
           required
         />
 
@@ -207,7 +207,7 @@ const CreateHost = () => {
           value={formData.retentionIncr}
           onChange={handleChange}
           min={1}
-          max={3}
+          max={999}
           required
         />
 

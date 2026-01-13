@@ -10,6 +10,7 @@ const BASE_URL_PERMISSION = "https://cause-merge-vcr-sticker.trycloudflare.com"/
 const BASE_URL_SETTING = "https://knights-lined-herself-tom.trycloudflare.com"//"http://127.0.0.1:8088";
 const BASE_URL_SCHEDULE = "https://new-floating-accepting-title.trycloudflare.com"//"http://127.0.0.1:5000";
 const BASE_URL_UPDATE = "https://hire-oklahoma-thermal-antibody.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
+const BASE_URL_GET_SCHEDULE = "https://fees-perceived-shipments-colleagues.trycloudflare.com"//"http://127.0.0.1:5002/";
 
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
@@ -450,7 +451,7 @@ export const getTransferred = () =>
 
 export const getTransferredWithHosts = async () => {
   const res = await getTransferred();
-   //console.log(res)
+  //console.log(res)
   return res.transferred.map(t => ({
     file: t.name,
     size: t.size,
@@ -481,13 +482,29 @@ export async function saveProvider(payload) {
   return data;
 }
 
-export const saveSchedule = async (schedule) => {
-  return await fetch(`${BASE_URL_SCHEDULE}`, {
+export const saveSchedule = async (input) => {
+  const list = Array.isArray(input)
+    ? input
+    : input && typeof input === 'object'
+      ? [input]
+      : [];
+
+  const payload = list
+    .filter(item => item.name && item.cron)
+    .map(item => ({
+      name: item.name.trim(),
+      cron: item.cron.trim(),
+      scope: item.scope || 'system',
+      nextRun: item.next_run || ''
+    }));
+
+  return fetch(BASE_URL_SCHEDULE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(schedule)
+    body: JSON.stringify(payload)
   });
 };
+
 
 export const updateProvider = async (providerName, form) => {
   const res = await fetch(`${BASE_URL_UPDATE}/${providerName}`, {
@@ -505,3 +522,19 @@ export const updateProvider = async (providerName, form) => {
 
   return res.json();
 };
+
+export async function getSchedularDetails() {
+  const res = await fetch(BASE_URL_GET_SCHEDULE, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error("Failed to fetch scheduler: " + text);
+  }
+
+  return res.json();
+}
