@@ -10,7 +10,7 @@ const BASE_URL_PERMISSION = "https://series-services-catalog-conservation.tryclo
 const BASE_URL_SETTING = "https://cpu-tagged-myrtle-strain.trycloudflare.com"//"http://127.0.0.1:8088";
 const BASE_URL_SCHEDULE = "https://privileges-daisy-valuation-dec.trycloudflare.com"//"http://127.0.0.1:5000";
 const BASE_URL_UPDATE = "https://history-realm-enforcement-notebook.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
-const BASE_URL_GET_SCHEDULE = "https://fotos-olive-screening-end.trycloudflare.com"//"http://127.0.0.1:5002/";
+const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycloudflare.com/"//"http://127.0.0.1:5002/";
 
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
