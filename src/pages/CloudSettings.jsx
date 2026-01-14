@@ -93,12 +93,9 @@ const CloudSettings = () => {
   };
 
   const handleSaveSchedule = async () => {
-    debugger;
-    console.log(schedule)
+    
     const res = await saveSchedule(schedule);
-    console.log(schedule)
-    console.log("res" +res)
-
+   
     if (res.ok) {
       alert('Schedule saved successfully');
       getScheduleDetails();
