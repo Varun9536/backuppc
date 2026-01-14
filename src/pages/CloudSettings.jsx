@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProviders, saveProvider, updateProvider } from '../services/api';
+import { getProviders, saveProvider, updateProvider, getSchedularDetails, saveSchedule } from '../services/api';
 
 const card = {
   padding: '14px 16px',
@@ -19,6 +19,16 @@ const th = {
 const td = {
   padding: "8px",
   borderBottom: "1px solid #e5e7eb",
+};
+
+const inputStyle = {
+  width: '100%',
+  padding: '6px 8px',
+  fontSize: 14,
+  border: '1px solid #ccc',
+  borderRadius: 4,
+  outline: 'none',
+  boxSizing: 'border-box'
 };
 
 const label = { display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, color: '#374151' }
@@ -48,6 +58,7 @@ const providersList = [
 
 const CloudSettings = () => {
   const [providersList, setProvidersList] = useState([]);
+  const [schedule, setSchedule] = useState([]);
 
   const [form, setForm] = useState({
     provider: "",
@@ -62,7 +73,48 @@ const CloudSettings = () => {
 
   useEffect(() => {
     loadProviders();
+    getScheduleDetails();
   }, []);
+
+  const updateRow = (e) => {
+    // setSchedule(prev => {
+    //   const copy = [...prev];
+    //   copy[index] = { ...copy[index], [field]: value };
+    //   return copy;
+    // });
+
+    const { name, value } = e.target;
+
+    // Set new state object with updated key or new key
+    setSchedule((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSaveSchedule = async () => {
+    const res = await saveSchedule(schedule);
+
+    if (res.ok) {
+      alert('Schedule saved successfully');
+      getScheduleDetails();
+    } else {
+      alert('Save failed');
+    }
+  };
+
+  const getScheduleDetails = async () => {
+    try {
+      const data = await getSchedularDetails();   // already JSON
+
+      setSchedule(data);
+
+      // console.log(data);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to get scheduler details");
+    }
+  };
 
   const PROVIDER_TYPE_MAP = {
     s3: "AWS_S3",
@@ -325,9 +377,9 @@ const CloudSettings = () => {
             </label>
             <button
               style={{
-               // padding: "9px 12px",
-                width:"5rem",
-                height:"2rem",
+                // padding: "9px 12px",
+                width: "5rem",
+                height: "2rem",
                 borderRadius: 8,
                 border: "1px solid #d1d5db",
                 background: "#e5edff",
@@ -389,6 +441,124 @@ const CloudSettings = () => {
       </section>
 
       <section style={{ marginTop: 18 }}>
+        <h2 style={{ marginBottom: 12 }}>Scheduled Jobs</h2>
+
+        <div
+          style={{
+            background: '#fff',
+            borderRadius: 8,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            overflowX: 'auto'
+          }}
+        >
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              minWidth: 800
+            }}
+          >
+            <thead>
+              <tr>
+                {['Name', 'Schedule', 'Scope', 'Next Run'].map(h => (
+                  <th
+                    key={h}
+                    style={{
+                      textAlign: 'left',
+                      padding: '12px 10px',
+                      background: '#f5f7fa',
+                      fontWeight: 600,
+                      fontSize: 14,
+                      borderBottom: '1px solid #ddd'
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {/* {schedule.map((row, i) => ( */}
+              <tr>
+                <td style={{ padding: 8 }}>
+                  <input
+                    style={inputStyle}
+                    value={schedule.name}
+                    onChange={updateRow}
+                    name="name"
+                  // onChange={e => updateRow(i, 'name', e.target.value)}
+                  />
+                </td>
+
+                <td style={{ padding: 8 }}>
+                  <input
+                    style={inputStyle}
+                    value={schedule.cron}
+                    onChange={updateRow}
+                    name="cron"
+                    // onChange={e => updateRow(i, 'cron', e.target.value)}
+                    placeholder="0 2 * * *"
+                  />
+                </td>
+
+                <td style={{ padding: 8 }}>
+                  <select
+                    style={inputStyle}
+                    value='system'
+                    onChange={updateRow}
+
+                  // onChange={e => updateRow(i, 'scope', e.target.value)}
+                  >
+                    <option value="system">All</option>
+                    {/* <option value="user">User</option> */}
+                  </select>
+                </td>
+
+                <td style={{ padding: 8 }}>
+                  <input
+                    style={{
+                      ...inputStyle,
+                      background: '#f0f0f0',
+                      color: '#666',
+                      cursor: 'not-allowed'
+                    }}
+                    placeholder="Tomorrow 02:00 AM"
+                    value={schedule.next_run}
+                    disabled
+                  />
+                </td>
+              </tr>
+              {/* ))} */}
+            </tbody>
+          </table>
+
+          <div
+            style={{
+              padding: 12,
+              borderTop: '1px solid #eee',
+              textAlign: 'right'
+            }}
+          >
+            <button
+              onClick={handleSaveSchedule}
+              style={{
+                padding: '8px 16px',
+                background: '#2563eb',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: 500,
+                cursor: 'pointer'
+              }}
+            >
+              Save Schedule
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* <section style={{ marginTop: 18 }}>
         <h2>Transfer Schedule</h2>
         <div style={card}>
           <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
@@ -418,10 +588,10 @@ const CloudSettings = () => {
           {/* <div style={{ marginTop: 10, ...hint }}>
             Cron and window are UI-only; backend will enforce schedule later.
           </div> */}
-        </div>
-      </section>
+      {/* </div>
+      </section> */}
 
-      {/* <section style={{ marginTop: 18 }}>
+      <section style={{ marginTop: 18 }}>
         <h2>Per-Host Overrides</h2>
         <div style={card}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -460,11 +630,11 @@ const CloudSettings = () => {
               ))}
             </tbody>
           </table>
-          <div style={{ marginTop: 10, ...hint }}>
+          {/* <div style={{ marginTop: 10, ...hint }}>
             Overrides are UI-only; when wired, selecting “Custom” should enable per-host cron/window and save to backend.
-          </div>
+          </div> */}
         </div>
-      </section> */}
+      </section>
 
       {/* <section style={{ marginTop: 18 }}>
         <h2>Provider Assignment</h2>

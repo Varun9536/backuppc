@@ -98,6 +98,7 @@ const CloudTransfers = () => {
 
     if (res.ok) {
       alert('Schedule saved successfully');
+      getScheduleDetails();
     } else {
       alert('Save failed');
     }
@@ -378,7 +379,7 @@ const CloudTransfers = () => {
             </tbody>
           </table>
 
-          <div
+          {/* <div
             style={{
               padding: 12,
               borderTop: '1px solid #eee',
@@ -399,7 +400,7 @@ const CloudTransfers = () => {
             >
               Save Schedule
             </button>
-          </div>
+          </div> */}
         </div>
       </section>
 
