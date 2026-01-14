@@ -8,7 +8,7 @@ const BASE_URL_LOG = "https://reflected-represent-dosage-rabbit.trycloudflare.co
 const BASE_URL_READLOG = "https://income-touched-directory-partners.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://fingers-producing-unix-representations.trycloudflare.com"//"http://127.0.0.1:8084";
 const BASE_URL_SETTING = "https://virtue-vault-asking-schools.trycloudflare.com"//"http://127.0.0.1:8088";
-const BASE_URL_SCHEDULE = "https://irc-parks-basename-loving.trycloudflare.com"//"http://127.0.0.1:5000";
+const BASE_URL_SCHEDULE = "https://monster-basically-cowboy-olympics.trycloudflare.com"//"http://127.0.0.1:8090";
 const BASE_URL_UPDATE = "https://ensure-keyboard-reviewed-varieties.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
 const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycloudflare.com/"//"http://127.0.0.1:5002/";
 
