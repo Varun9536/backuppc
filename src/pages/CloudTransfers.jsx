@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule, getSchedularDetails } from '../services/api'
+import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule, getSchedularDetails, getTransferPolicies } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -65,6 +65,12 @@ const CloudTransfers = () => {
   const [stats, setStats] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
+  const [data, setDataTransfer] = useState({
+      mode: "After every backup",
+      bandwidth: "",
+      retries: "",
+      parallel: ""
+    });
 
   // const [schedule, setSchedule] = useState([
   //   {
@@ -210,6 +216,18 @@ const CloudTransfers = () => {
     loadHosts();
   }, [stats, transfers]);
 
+  useEffect(() => {
+    getTransferPolicies()
+      .then(res => {
+        if (res && Object.keys(res).length) {
+          setDataTransfer(res);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load transfer policies", err);
+      });
+  }, []);
+
   const handleClick = async (selectedHost) => {
     if (!selectedHost) {
       alert("Please select a host");
@@ -226,8 +244,8 @@ const CloudTransfers = () => {
 
       // log start
       await writeLog("INFO", `Starting sync for host ${selectedHost}`);
-
-      const result = await startSync(spath, dpath);
+      await writeLog("INFO", `Retries: ${data.retries}`);
+      const result = await startSync(spath, dpath, data.retries);
 
       // log success
       await writeLog("INFO", `Sync completed successfully for host ${selectedHost} by sync/copy api`);

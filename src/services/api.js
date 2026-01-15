@@ -8,9 +8,10 @@ const BASE_URL_LOG = "https://reflected-represent-dosage-rabbit.trycloudflare.co
 const BASE_URL_READLOG = "https://income-touched-directory-partners.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://fingers-producing-unix-representations.trycloudflare.com"//"http://127.0.0.1:8084";
 const BASE_URL_SETTING = "https://virtue-vault-asking-schools.trycloudflare.com"//"http://127.0.0.1:8088";
-const BASE_URL_SCHEDULE = "https://demonstrates-daily-vacuum-martial.trycloudflare.com" //"http://127.0.0.1:8090";
+const BASE_URL_SCHEDULE = "https://examination-milan-james-enemies.trycloudflare.com" //"http://127.0.0.1:8090";
 const BASE_URL_UPDATE = "https://ensure-keyboard-reviewed-varieties.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
 const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycloudflare.com/"//"http://127.0.0.1:5002/";
+const BASE_URL_TRANSFER = "https://announce-cookbook-ross-praise.trycloudflare.com"//"http://127.0.0.1:8092";
 
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
@@ -410,7 +411,7 @@ const request = async (url, options) => {
   return res.json();
 };
 
-export const startSync = (spath, dpath) =>
+export const startSync = (spath, dpath, retries) =>
   request("/sync/copy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -422,7 +423,7 @@ export const startSync = (spath, dpath) =>
         no_update_dir_modtime: true,
         create_empty_src_dirs: true,
         ignore_existing: false,
-        retries: 3
+        retries: retries
       }
     })
 
@@ -538,3 +539,19 @@ export async function getSchedularDetails() {
 
   return res.json();
 }
+
+export async function getTransferPolicies() {
+  const res = await fetch(`${BASE_URL_TRANSFER}/transfer-policies`);
+  return res.json();
+}
+
+export async function saveTransferPolicies(data) {
+  const res = await fetch(`${BASE_URL_TRANSFER}/transfer-policies`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  return res.json();
+}
+

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { restoreAPI, startSync, writeLog, setPermissions, getTransferredWithHosts } from '../services/api'
+import { restoreAPI, startSync, writeLog, setPermissions, getTransferredWithHosts, getTransferPolicies } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -60,6 +60,12 @@ const CloudBackups = () => {
   const [syncing, setSyncing] = useState(false);
   const [transfers, setTransfers] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
+  const [data, setDataTransfer] = useState({
+        mode: "After every backup",
+        bandwidth: "",
+        retries: "",
+        parallel: ""
+      });
 
   const loadHosts = async () => {
     try {
@@ -127,10 +133,21 @@ const CloudBackups = () => {
     loadHosts();
   }, [transfers]);
 
+  useEffect(() => {
+    getTransferPolicies()
+      .then(res => {
+        if (res && Object.keys(res).length) {
+          setDataTransfer(res);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load transfer policies", err);
+      });
+  }, []);
   const handleClick = async (selectedHost) => {
     if (!selectedHost) {
       alert("Please select a host");
-      writeLog("ERROR", "No host selected");
+      await writeLog("ERROR", "No host selected");
       return;
     }
 
@@ -142,11 +159,12 @@ const CloudBackups = () => {
       const spath = `/home/aagarwalAnubhav/BackupVMTest/pc/${selectedHost}`;
       const dpath = `azure:sudheer/BackupVMTest/pc/${selectedHost}`;
 
-      writeLog("INFO", `Starting sync for host: ${selectedHost}`);
-      const result = await startSync(dpath, spath);
+      await writeLog("INFO", `Starting restore for host: ${selectedHost}`);
+      await writeLog("INFO", `Retries: ${data.retries}`);
+      const result = await startSync(dpath, spath, data.retries);
 
       alert(`${selectedHost} restored Successfully !`);
-      writeLog("INFO", `Host ${selectedHost} restored successfully sync/copy api`);
+      await writeLog("INFO", `Host ${selectedHost} restored successfully sync/copy api`);
 
       await writeLog("INFO", `Payload {sourcepath -  ${dpath}, destinationpath - ${spath}}`);
 
@@ -154,7 +172,7 @@ const CloudBackups = () => {
     } catch (err) {
       console.error(err);
       alert(`Failed to restore`);
-      writeLog("ERROR", `Failed to restore host ${selectedHost}: ${err.message}`);
+      await writeLog("ERROR", `Failed to restore host ${selectedHost}: ${err.message}`);
       //setSyncing(false);
     }
   };

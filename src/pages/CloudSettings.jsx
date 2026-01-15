@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProviders, saveProvider, updateProvider, getSchedularDetails, saveSchedule } from '../services/api';
+import { getProviders, saveProvider, updateProvider, getSchedularDetails, saveSchedule, getTransferPolicies, saveTransferPolicies } from '../services/api';
 
 const card = {
   padding: '14px 16px',
@@ -67,14 +67,48 @@ const CloudSettings = () => {
     accessKey: "",
     secretKey: "",
   });
+  const [data, setData] = useState({
+    mode: "After every backup",
+    bandwidth: "",
+    retries: "",
+    parallel: ""
+  });
 
   const [isEdit, setIsEdit] = useState(false);
   const [editingProvider, setEditingProvider] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadProviders();
     getScheduleDetails();
   }, []);
+  /* LOAD from backend */
+  useEffect(() => {
+    getTransferPolicies()
+      .then(res => {
+        if (res && Object.keys(res).length) {
+          setData(res);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load transfer policies", err);
+      });
+  }, []);
+
+  /* SAVE to backend */
+  const savePolicies = async () => {
+    try {
+      setSaving(true);
+      await saveTransferPolicies(data);
+      alert("Transfer policies saved successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save transfer policies");
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   const updateRow = (e) => {
     // setSchedule(prev => {
@@ -93,9 +127,9 @@ const CloudSettings = () => {
   };
 
   const handleSaveSchedule = async () => {
-    
+
     const res = await saveSchedule(schedule);
-   
+
     if (res.ok) {
       alert('Schedule saved successfully');
       getScheduleDetails();
@@ -416,28 +450,61 @@ const CloudSettings = () => {
           <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
             <label style={label}>
               Transfer Mode
-              <select disabled style={select}>
+              <select
+                style={select}
+                value={data.mode}
+                onChange={e => setData({ ...data, mode: e.target.value })}
+              >
                 <option>After every backup</option>
                 <option>Scheduled window</option>
                 <option>Manual only</option>
               </select>
             </label>
+
             <label style={label}>
               Bandwidth Limit (MB/s)
-              <input disabled style={input} placeholder="50" />
+              <input
+                style={input}
+                value={data.bandwidth}
+                onChange={e => setData({ ...data, bandwidth: e.target.value })}
+              />
             </label>
+
             <label style={label}>
               Retries
-              <input disabled style={input} placeholder="3" />
+              <input
+                style={input}
+                value={data.retries}
+                onChange={e => setData({ ...data, retries: e.target.value })}
+              />
             </label>
+
             <label style={label}>
               Parallel Uploads
-              <input disabled style={input} placeholder="4" />
+              <input
+                style={input}
+                value={data.parallel}
+                onChange={e => setData({ ...data, parallel: e.target.value })}
+              />
             </label>
           </div>
-          {/* <div style={{ marginTop: 10, ...hint }}>
-            Values are static; connect to backend settings later.
-          </div> */}
+
+          <button
+            onClick={savePolicies}
+            style={{
+              marginTop: 16,
+              padding: "8px 16px",
+              background: "rgb(37, 99, 235)",
+              color: "rgb(255, 255, 255)",
+              border: "none",
+              borderRadius: 6,
+              fontWeight: 500,
+              cursor: "pointer"
+            }}
+          >
+            Save Policies
+          </button>
+
         </div>
       </section>
 
