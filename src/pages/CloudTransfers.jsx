@@ -152,7 +152,7 @@ const CloudTransfers = () => {
         label: key,
         value
       }));
-
+      //console.log(statsArray);
       setStats(statsArray);
       //console.log(data);
     } catch (err) {
@@ -186,7 +186,7 @@ const CloudTransfers = () => {
   async function saveStats(statsArray) {
     try {
       const result = await saveCloudTransfer(statsArray);
-      console.log("Saved:", result);
+      // console.log("Saved:", result);
     } catch (err) {
       console.error(err);
     }
@@ -259,10 +259,17 @@ const CloudTransfers = () => {
       alert(`${selectedHost} Sync Successfully !`);
       setSyncing(false);
       loadData1();
-      stats.push({ label: "host", value: selectedHost });
-      stats.push({ label: "status", value: "Success" });
       //console.log(stats);
-      await saveStats(stats);
+      // stats.push({ label: "host", value: selectedHost });
+      // stats.push({ label: "status", value: "Success" });
+      const updatedStats = [
+        ...stats,
+        { label: "host", value: selectedHost },
+        { label: "status", value: "Success" }
+      ];
+
+      // console.log(updatedStats);
+      await saveStats(updatedStats);
     } catch (err) {
       console.error(err);
 
@@ -274,7 +281,12 @@ const CloudTransfers = () => {
       loadData1();
       stats.push({ label: "host", value: selectedHost });
       stats.push({ label: "status", value: "Failed" });
-      //console.log(stats);
+      // const updatedStats = [
+      //   ...stats,
+      //   { label: "host", value: selectedHost },
+      //   { label: "status", value: "Failed" }
+      // ];
+
       await saveStats(stats);
     }
   };
