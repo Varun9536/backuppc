@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule, getSchedularDetails, getTransferPolicies } from '../services/api'
+import { startSync, restoreAPI, writeLog, setPermissions, getTransferredWithHosts, getRcloneStats, saveSchedule, getSchedularDetails, getTransferPolicies, saveCloudTransfer, getCloudTransfers } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -62,15 +62,16 @@ const CloudTransfers = () => {
   const [a, setdata] = useState([])
   const [syncing, setSyncing] = useState(false);
   const [transfers, setTransfers] = useState([]);
+  const [cloudTransfers, setCloudTransfers] = useState([]);
   const [stats, setStats] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
   const [data, setDataTransfer] = useState({
-      mode: "After every backup",
-      bandwidth: "",
-      retries: "",
-      parallel: ""
-    });
+    mode: "After every backup",
+    bandwidth: "",
+    retries: "",
+    parallel: ""
+  });
 
   // const [schedule, setSchedule] = useState([
   //   {
@@ -131,39 +132,6 @@ const CloudTransfers = () => {
 
       const data = await restoreAPI.getHosts()
 
-      const getStatValue = (stats, label) => {
-        const item = stats.find(s => s.label === label);
-        return Math.max(0, Number(item?.value || 0));
-      };
-
-      // console.log(data)
-      while (recent.length < data.length) {
-        recent.push({ host: undefined });
-      }
-
-      const formatDateTime = (iso) => {
-        if (!iso) return "-";
-
-        return iso.split(".")[0].replace("T", " ");
-      };
-
-      let currentDate = new Date();
-      let formattedDate = currentDate.getFullYear() + '-' +
-        ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
-        ('0' + currentDate.getDate()).slice(-2) + ' ' +
-        ('0' + currentDate.getHours()).slice(-2) + ':' +
-        ('0' + currentDate.getMinutes()).slice(-2) + ':' +
-        ('0' + currentDate.getSeconds()).slice(-2);
-
-      recent.forEach((item, index) => {
-        item.host = data[index]?.user;
-        item.duration = `${getStatValue(stats, "elapsedTime").toFixed(0)} ms`;//'14ms';
-        item.ended = formattedDate;//formatDateTime(transfers[index]?.completed_at)//'02:15';
-        item.message = `Uploaded ${safeNumber(transfers[index]?.size || 0)} objects`;
-        item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
-        item.status = 'Success';
-        item.type = 'Full';
-      });
 
       setdata(data)
 
@@ -175,46 +143,33 @@ const CloudTransfers = () => {
     }
   }
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await getTransferredWithHosts();
-        setTransfers(data);
-        // console.log(data);
-      } catch (err) {
-        console.error("Failed to load transfers", err);
-      }
-    };
 
-    loadData();
-  }, []);
+  const loadData1 = async () => {
+    try {
+      const data = await getRcloneStats();
 
+      const statsArray = Object.entries(data).map(([key, value]) => ({
+        label: key,
+        value
+      }));
 
-  useEffect(() => {
-    const loadData1 = async () => {
-      try {
-        const data = await getRcloneStats();
-
-        const statsArray = Object.entries(data).map(([key, value]) => ({
-          label: key,
-          value
-        }));
-
-        setStats(statsArray);
-        // console.log(statsArray);
-      } catch (err) {
-        console.error("Failed to load stats", err);
-      }
-    };
-
-    loadData1();
-  }, []);
+      setStats(statsArray);
+      //console.log(data);
+    } catch (err) {
+      console.error("Failed to load stats", err);
+    }
+  };
 
   useEffect(() => {
-    if (stats.length === 0 || transfers.length === 0) return;
 
     loadHosts();
-  }, [stats, transfers]);
+  }, []);
+
+  // useEffect(() => {
+  //   if (stats.length === 0 || transfers.length === 0) return;
+
+  //   loadHosts();
+  // }, [stats, transfers]);
 
   useEffect(() => {
     getTransferPolicies()
@@ -226,6 +181,55 @@ const CloudTransfers = () => {
       .catch(err => {
         console.error("Failed to load transfer policies", err);
       });
+  }, []);
+
+  async function saveStats(statsArray) {
+    try {
+      const result = await saveCloudTransfer(statsArray);
+      console.log("Saved:", result);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  function bindHostData(allData) {
+    return Object.entries(allData).map(([host, info]) => ({
+      host,
+      updatedAt: info.updated_at,
+      stats: info.stats
+    }));
+  }
+  function statsToMap(stats = []) {
+    return Object.fromEntries(
+      stats.map(s => [s.label, s.value])
+    );
+  }
+
+  function toRecentTransferRows(boundHosts) {
+    return boundHosts.map(item => {
+      const s = statsToMap(item.stats);
+
+      return {
+        host: item.host,
+        type: 'Full', // or s.type if you store it
+        size: `${s.totalBytes ?? s.bytes ?? 0} bytes`,
+        duration: s.elapsedTime
+          ? `${Math.round(s.elapsedTime)} ms`
+          : '-',
+        ended: new Date(item.updatedAt * 1000).toLocaleString(),
+        status: s.status,
+        message: `Uploaded ${s.totalTransfers ?? 0} objects`
+      };
+    });
+  }
+
+  useEffect(() => {
+    getCloudTransfers()
+      .then(data => {
+        const bound = bindHostData(data);          // host + stats
+        const rows = toRecentTransferRows(bound); // flat rows
+        setCloudTransfers(rows);
+      })
+      .catch(console.error);
   }, []);
 
   const handleClick = async (selectedHost) => {
@@ -254,6 +258,11 @@ const CloudTransfers = () => {
 
       alert(`${selectedHost} Sync Successfully !`);
       setSyncing(false);
+      loadData1();
+      stats.push({ label: "host", value: selectedHost });
+      stats.push({ label: "status", value: "Success" });
+      //console.log(stats);
+      await saveStats(stats);
     } catch (err) {
       console.error(err);
 
@@ -262,6 +271,11 @@ const CloudTransfers = () => {
 
       alert(`Failed to sync`);
       setSyncing(false);
+      loadData1();
+      stats.push({ label: "host", value: selectedHost });
+      stats.push({ label: "status", value: "Failed" });
+      //console.log(stats);
+      await saveStats(stats);
     }
   };
 
@@ -277,16 +291,16 @@ const CloudTransfers = () => {
           <table style={table}>
             <thead>
               <tr>
-                {['Host', 'Type', 'Size', 'Duration', 'Ended', 'Status', 'Message'].map(h => (
+                {['Host', 'Size', 'Duration', 'Ended', 'Status', 'Message'].map(h => (
                   <th key={h} style={{ ...thtd, color: 'black', fontWeight: 600 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {recent.map(row => (
+              {cloudTransfers.map(row => (
                 <tr key={row.host + row.ended}>
                   <td style={thtd}>{row.host}</td>
-                  <td style={thtd}>{row.type}</td>
+                  {/* <td style={thtd}>{row.type}</td> */}
                   <td style={thtd}>{row.size}</td>
                   <td style={thtd}>{row.duration}</td>
                   <td style={thtd}>{row.ended}</td>
@@ -299,6 +313,7 @@ const CloudTransfers = () => {
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </section>

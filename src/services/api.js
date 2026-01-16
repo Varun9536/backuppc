@@ -8,10 +8,11 @@ const BASE_URL_LOG = "https://reflected-represent-dosage-rabbit.trycloudflare.co
 const BASE_URL_READLOG = "https://income-touched-directory-partners.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://fingers-producing-unix-representations.trycloudflare.com"//"http://127.0.0.1:8084";
 const BASE_URL_SETTING = "https://virtue-vault-asking-schools.trycloudflare.com"//"http://127.0.0.1:8088";
-const BASE_URL_SCHEDULE = "https://highest-directories-updated-reason.trycloudflare.com" //"http://127.0.0.1:8090";
+const BASE_URL_SCHEDULE = "https://supervisors-rarely-cells-agrees.trycloudflare.com" //"http://127.0.0.1:8090";
 const BASE_URL_UPDATE = "https://ensure-keyboard-reviewed-varieties.trycloudflare.com/api/providers"//"http://127.0.0.1:5001/api/providers";
 const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycloudflare.com/"//"http://127.0.0.1:5002/";
 const BASE_URL_TRANSFER = "https://announce-cookbook-ross-praise.trycloudflare.com"//"http://127.0.0.1:8092";
+const API_BASE = "https://spears-monitor-totals-beginning.trycloudflare.com"//"http://127.0.0.1:8093"; 
 
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
@@ -555,3 +556,30 @@ export async function saveTransferPolicies(data) {
   return res.json();
 }
 
+export async function saveCloudTransfer(statsArray) {
+  const res = await fetch(`${API_BASE}/save`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(statsArray)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Save failed: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function getCloudTransfers() {
+  const res = await fetch(`${API_BASE}/get`, {
+    method: "GET"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Get failed: ${res.status}`);
+  }
+
+  return res.json();
+}
