@@ -63,10 +63,11 @@ const CloudTransfers = () => {
   const [syncing, setSyncing] = useState(false);
   const [transfers, setTransfers] = useState([]);
   const [cloudTransfers, setCloudTransfers] = useState([]);
+  const [afterRefresh, setAfterRefresh] = useState(true);
   const [stats, setStats] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
-  const [data, setDataTransfer] = useState({
+  const [dataTransfer, setDataTransfer] = useState({
     mode: "After every backup",
     bandwidth: "",
     retries: "",
@@ -143,7 +144,6 @@ const CloudTransfers = () => {
     }
   }
 
-
   const loadData1 = async () => {
     try {
       const data = await getRcloneStats();
@@ -152,8 +152,9 @@ const CloudTransfers = () => {
         label: key,
         value
       }));
-      //console.log(statsArray);
+
       setStats(statsArray);
+      return statsArray
       //console.log(data);
     } catch (err) {
       console.error("Failed to load stats", err);
@@ -230,7 +231,7 @@ const CloudTransfers = () => {
         setCloudTransfers(rows);
       })
       .catch(console.error);
-  }, []);
+  }, [afterRefresh]);
 
   const handleClick = async (selectedHost) => {
     if (!selectedHost) {
@@ -248,8 +249,10 @@ const CloudTransfers = () => {
 
       // log start
       await writeLog("INFO", `Starting sync for host ${selectedHost}`);
-      await writeLog("INFO", `Retries: ${data.retries}`);
-      const result = await startSync(spath, dpath, data.retries);
+
+      await writeLog("INFO", `Retries: ${dataTransfer.retries}`);
+
+      const result = await startSync(spath, dpath, dataTransfer.retries);
 
       // log success
       await writeLog("INFO", `Sync completed successfully for host ${selectedHost} by sync/copy api`);
@@ -258,18 +261,16 @@ const CloudTransfers = () => {
 
       alert(`${selectedHost} Sync Successfully !`);
       setSyncing(false);
-      loadData1();
-      //console.log(stats);
-      // stats.push({ label: "host", value: selectedHost });
-      // stats.push({ label: "status", value: "Success" });
-      const updatedStats = [
-        ...stats,
-        { label: "host", value: selectedHost },
-        { label: "status", value: "Success" }
-      ];
 
-      // console.log(updatedStats);
-      await saveStats(updatedStats);
+      const data = await loadData1();
+
+      const mydata = [...data, { label: "host", value: selectedHost },
+      { label: "status", value: "Success" }]
+
+      await saveStats(mydata);
+
+      setAfterRefresh((prev)=> !prev);
+
     } catch (err) {
       console.error(err);
 
@@ -278,16 +279,13 @@ const CloudTransfers = () => {
 
       alert(`Failed to sync`);
       setSyncing(false);
-      loadData1();
-      stats.push({ label: "host", value: selectedHost });
-      stats.push({ label: "status", value: "Failed" });
-      // const updatedStats = [
-      //   ...stats,
-      //   { label: "host", value: selectedHost },
-      //   { label: "status", value: "Failed" }
-      // ];
+      const dataFailed = await loadData1();
 
-      await saveStats(stats);
+      const mydataFailed = [...dataFailed, { label: "host", value: selectedHost },
+      { label: "status", value: "Failed" }]
+
+      await saveStats(mydataFailed);
+      setAfterRefresh((prev)=> !prev);
     }
   };
 
