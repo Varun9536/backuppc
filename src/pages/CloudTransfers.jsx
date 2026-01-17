@@ -279,9 +279,8 @@ const CloudTransfers = () => {
 
       alert(`Failed to sync`);
       setSyncing(false);
-      const dataFailed = await loadData1();
-
-      const mydataFailed = [...dataFailed, { label: "host", value: selectedHost },
+      
+      const mydataFailed = [{ label: "host", value: selectedHost },
       { label: "status", value: "Failed" }]
 
       await saveStats(mydataFailed);
