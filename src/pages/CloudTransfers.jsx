@@ -269,7 +269,7 @@ const CloudTransfers = () => {
 
       await saveStats(mydata);
 
-      setAfterRefresh((prev)=> !prev);
+      setAfterRefresh((prev) => !prev);
 
     } catch (err) {
       console.error(err);
@@ -279,12 +279,12 @@ const CloudTransfers = () => {
 
       alert(`Failed to sync`);
       setSyncing(false);
-      
+
       const mydataFailed = [{ label: "host", value: selectedHost },
       { label: "status", value: "Failed" }]
 
       await saveStats(mydataFailed);
-      setAfterRefresh((prev)=> !prev);
+      setAfterRefresh((prev) => !prev);
     }
   };
 
@@ -470,7 +470,12 @@ const CloudTransfers = () => {
         </div>
         <div style={card}>
           <button
-            onClick={() => handleClick(selectedHost)}
+            onClick={() => {
+              if (window.confirm("The Backup will start immediately. Please confirm.")) {
+                handleClick(selectedHost);
+              }
+            }}
+
             disabled={!selectedHost || syncing}
             style={{
               padding: '9px 12px',
@@ -481,7 +486,7 @@ const CloudTransfers = () => {
               opacity: selectedHost && !syncing ? 1 : 0.6
             }}
           >
-            {syncing ? 'Syncing in progress' : 'Start Sync Now'}
+            {syncing ? 'Syncing in progress' : 'Start Cloud Upload Now'}
           </button>
 
         </div>

@@ -78,8 +78,29 @@ const Reports = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Reports & Logs</h1>
+      {/* <h1>Reports & Logs</h1> */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>Reports & Logs</h1>
 
+        <button
+          onClick={() => {
+            if (window.confirm("Are you sure you want to permanently clear reports & logs?")) {
+              setLogContent({ content: "" });
+            }
+          }}
+          style={{
+            padding: '8px 12px',
+            borderRadius: 8,
+            border: '1px solid #dc2626',
+            background: '#fee2e2',
+            color: '#b91c1c',
+            cursor: 'pointer',
+            fontWeight: 600
+          }}
+        >
+          Clear Logs
+        </button>
+      </div>
       <div className={styles.selectGroup}>
         <label htmlFor="logSelect">Select Log Type:</label>
         <select

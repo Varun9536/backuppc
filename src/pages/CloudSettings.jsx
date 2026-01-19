@@ -659,7 +659,7 @@ const CloudSettings = () => {
       {/* </div>
       </section> */}
 
-      <section style={{ marginTop: 18 }}>
+      <section style={{ marginTop: 18, display: 'none' }}>
         <h2>Per-Host Overrides</h2>
         <div style={card}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

@@ -26,8 +26,10 @@ const card = {
 const table = {
   width: '100%',
   borderCollapse: 'collapse',
-  marginTop: '8px'
+  marginTop: '8px',
+  tableLayout: 'fixed'   // ✅ ADD THIS
 }
+
 
 const thtd = {
   textAlign: 'left',
@@ -61,11 +63,11 @@ const CloudBackups = () => {
   const [transfers, setTransfers] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
   const [data, setDataTransfer] = useState({
-        mode: "After every backup",
-        bandwidth: "",
-        retries: "",
-        parallel: ""
-      });
+    mode: "After every backup",
+    bandwidth: "",
+    retries: "",
+    parallel: ""
+  });
 
   const loadHosts = async () => {
     try {
@@ -277,7 +279,15 @@ const CloudBackups = () => {
                       {row.status}
                     </span>
                   </td>
-                  <td style={thtd}>{row.cloudPath}</td>
+                  <td style={{
+                    ...thtd,
+                    maxWidth: 220,
+                    wordBreak: 'break-all',
+                    whiteSpace: 'normal'
+                  }}>
+                    {row.cloudPath}
+                  </td>
+
                   <td style={thtd}>
                     <button
                       onClick={() => handleClick(row.backupId)}

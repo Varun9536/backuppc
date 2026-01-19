@@ -98,6 +98,7 @@
 }
 
 .sidebarSectionTitle {
+  margin-top: 24px;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
