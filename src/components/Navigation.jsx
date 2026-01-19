@@ -15,7 +15,7 @@ const Navigation = () => {
     { path: '/backups', label: 'Backups', icon: '⟳' },
     { path: '/restore', label: 'Restore', icon: '⤵' },
     { path: '/reports', label: 'Reports & Logs', icon: '📊' },
-    { path: '/notifications', label: 'Notifications', icon: '✉' }
+    //{ path: '/notifications', label: 'Notifications', icon: '✉' }
   ]
 
   const cloudNavItems = [
@@ -23,7 +23,7 @@ const Navigation = () => {
     { path: '/cloud/transfers', label: 'Cloud Transfers', icon: '⇅' },
     { path: '/cloud/backups', label: 'Cloud Backups', icon: '🗂' },
     { path: '/cloud/reports', label: 'Cloud Reports & Logs', icon: '📜' },
-    { path: '/cloud/notifications', label: 'Cloud Notifications', icon: '🔔' },
+   // { path: '/cloud/notifications', label: 'Cloud Notifications', icon: '🔔' },
     { path: '/cloud/settings', label: 'Cloud Settings', icon: '⚡' }
   ]
 
