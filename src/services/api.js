@@ -14,6 +14,7 @@ const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycl
 const BASE_URL_TRANSFER = "https://announce-cookbook-ross-praise.trycloudflare.com"//"http://127.0.0.1:8092";
 const API_BASE = "https://spears-monitor-totals-beginning.trycloudflare.com"//"http://127.0.0.1:8093"; 
 const API_LOG_DELETE_URL = "https://floppy-celebration-lamb-trusted.trycloudflare.com"//"http://127.0.0.1:8095";
+const API_CLOUD_OVERVIEW = "https://assumption-ruling-closely-imagination.trycloudflare.com"//"http://127.0.0.1:8096";
 
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
@@ -609,3 +610,23 @@ export const deleteRcloneLog = async () => {
     throw error;
   }
 };
+
+export async function getCloudOverview() {
+  try {
+    const res = await fetch(`${API_CLOUD_OVERVIEW}/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`API failed: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("Cloud overview API error:", err);
+    return null;
+  }
+}
