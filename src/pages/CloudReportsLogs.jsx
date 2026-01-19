@@ -1,7 +1,7 @@
 import styles from './Reports.module.css'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchLog } from '../services/api'
+import { fetchLog, deleteRcloneLog } from '../services/api'
 
 const card = {
   padding: '14px 16px',
@@ -60,6 +60,20 @@ const CloudReportsLogs = () => {
       });
   }, []);
 
+  const handleDeleteLog = async () => {
+  try {
+    const res = await deleteRcloneLog();
+    alert(res.message);
+    fetchLog()
+      .then((data) => {
+        // bind fetched text into state
+        setLogContent({ content: data });
+      })
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
   return (
     <div>
       {/* <h1>Cloud Reports & Logs</h1> */}
@@ -69,7 +83,8 @@ const CloudReportsLogs = () => {
         <button
           onClick={() => {
             if (window.confirm("Are you sure you want to permanently clear reports & logs?")) {
-              setLogContent({ content: "" });
+              //setLogContent({ content: "" });
+              handleDeleteLog();
             }
           }}
           style={{

@@ -13,6 +13,7 @@ const BASE_URL_UPDATE = "https://ensure-keyboard-reviewed-varieties.trycloudflar
 const BASE_URL_GET_SCHEDULE = "https://cope-shelter-preferences-confidence.trycloudflare.com/"//"http://127.0.0.1:5002/";
 const BASE_URL_TRANSFER = "https://announce-cookbook-ross-praise.trycloudflare.com"//"http://127.0.0.1:8092";
 const API_BASE = "https://spears-monitor-totals-beginning.trycloudflare.com"//"http://127.0.0.1:8093"; 
+const API_LOG_DELETE_URL = "https://floppy-celebration-lamb-trusted.trycloudflare.com"//"http://127.0.0.1:8095";
 
 // Utility delay function
 const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
@@ -583,3 +584,28 @@ export async function getCloudTransfers() {
 
   return res.json();
 }
+
+/**
+ * Permanently delete rclone log file
+ */
+export const deleteRcloneLog = async () => {
+  try {
+    const response = await fetch(`${API_LOG_DELETE_URL}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete log file");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Delete log error:", error);
+    throw error;
+  }
+};
