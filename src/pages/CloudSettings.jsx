@@ -358,7 +358,6 @@ const CloudSettings = () => {
                 <option value="GCS">GCS</option>
                 <option value="GDRIVE">GDrive</option>
                 <option value="S3_COMPAT">S3-compatible</option>
-
               </select>
             </label>
 
@@ -370,7 +369,6 @@ const CloudSettings = () => {
                 onChange={(e) =>
                   setForm({ ...form, bucketName: e.target.value })
                 }
-                placeholder=""
               />
             </label>
 
@@ -382,7 +380,6 @@ const CloudSettings = () => {
                 onChange={(e) =>
                   setForm({ ...form, region: e.target.value })
                 }
-                placeholder=""
               />
             </label>
 
@@ -394,37 +391,41 @@ const CloudSettings = () => {
                 onChange={(e) =>
                   setForm({ ...form, accessKey: e.target.value })
                 }
-                placeholder=""
               />
             </label>
 
-            <label style={label}>
-              Secret Key
-              <input
-                type="password"
-                style={input}
-                value={form.secretKey}
-                onChange={(e) =>
-                  setForm({ ...form, secretKey: e.target.value })
-                }
-                placeholder="••••••••"
-              />
-            </label>
-            <button
-              style={{
-                // padding: "9px 12px",
-                width: "5rem",
-                height: "2rem",
-                borderRadius: 8,
-                border: "1px solid #d1d5db",
-                background: "#e5edff",
-                cursor: "pointer",
-              }}
-              onClick={handleClear}
-            >
-              Clear
-            </button>
+            {/* 🔹 Secret + Clear together */}
+            <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+              <label style={{ ...label, flex: 1 }}>
+                Secret Key
+                <input
+                  type="password"
+                  style={input}
+                  value={form.secretKey}
+                  onChange={(e) =>
+                    setForm({ ...form, secretKey: e.target.value })
+                  }
+                  placeholder="••••••••"
+                />
+              </label>
+
+              <button
+                style={{
+                  height: "2.2rem",
+                  padding: "0 14px",
+                  borderRadius: 8,
+                  border: "1px solid #d1d5db",
+                  background: "#e5edff",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+                onClick={handleClear}
+              >
+                Clear
+              </button>
+            </div>
           </div>
+
 
           <div style={{ marginTop: 10 }}>
             <button
