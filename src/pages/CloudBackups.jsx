@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from './Restore.module.css'
-import { restoreAPI, startSync, writeLog, setPermissions, getTransferredWithHosts, getTransferPolicies } from '../services/api'
+import { restoreAPI, startSync, writeLog, setPermissions, getTransferredWithHosts, getTransferPolicies, getCloudTransfers } from '../services/api'
 import { useSelector } from 'react-redux'
 import { userRoles } from '../services/role'
 
@@ -62,6 +62,8 @@ const CloudBackups = () => {
   const [syncing, setSyncing] = useState(false);
   const [transfers, setTransfers] = useState([]);
   const safeNumber = (v) => Math.max(0, Number(v) || 0);
+  const [cloudTransfers, setCloudTransfers] = useState([]);
+  const [afterRefresh, setAfterRefresh] = useState(true);
   const [data, setDataTransfer] = useState({
     mode: "After every backup",
     bandwidth: "",
@@ -76,9 +78,9 @@ const CloudBackups = () => {
       const data = await restoreAPI.getHosts()
 
       //console.log(data)
-      while (backups.length < data.length) {
-        backups.push({ host: undefined });
-      }
+      // while (backups.length < data.length) {
+      //   backups.push({ host: undefined });
+      // }
       let currentDate = new Date();
       let formattedDate = currentDate.getFullYear() + '-' +
         ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
@@ -93,17 +95,17 @@ const CloudBackups = () => {
         return iso.split(".")[0].replace("T", " ");
       };
 
-      backups.forEach((item, index) => {
-        item.provider = 'Azure Blob';
-        item.host = data[index]?.user;
-        item.backupId = data[index]?.hostname;
-        const dpath = `azure:sudheer/BackupVMTest/pc/${data[index]?.hostname}`;
-        item.cloudPath = dpath;
-        item.date = formattedDate //formatDateTime(transfers[index]?.started_at);
-        //item.type = 'Full';
-        item.status = 'Present';
-        item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
-      });
+      // backups.forEach((item, index) => {
+      //   item.provider = 'Azure Blob';
+      //   item.host = data[index]?.user;
+      //   item.backupId = data[index]?.hostname;
+      //   const dpath = `azure:sudheer/BackupVMTest/pc/${data[index]?.hostname}`;
+      //   item.cloudPath = dpath;
+      //   item.date = formattedDate //formatDateTime(transfers[index]?.started_at);
+      //   //item.type = 'Full';
+      //   item.status = 'Present';
+      //   item.size = `${safeNumber(transfers[index]?.size)} bytes`;//'100MB';
+      // });
 
       setdata(data)
 
@@ -115,37 +117,46 @@ const CloudBackups = () => {
     }
   }
 
+  function bindHostData(allData) {
+    return Object.entries(allData).map(([host, info]) => ({
+      host,
+      updatedAt: info.updated_at,
+      stats: info.stats
+    }));
+  }
+  function statsToMap(stats = []) {
+    return Object.fromEntries(
+      stats.map(s => [s.label, s.value])
+    );
+  }
+
+  function toRecentTransferRows(boundHosts) {
+    const provider = import.meta.env.VITE_PROVIDER;
+    const cloudPath = import.meta.env.VITE_CLOUD_PATH;
+    return boundHosts.map(item => {
+      const s = statsToMap(item.stats);
+
+      return {
+        provider: provider,
+        host: item.host,
+        size: `${s.totalBytes ?? s.bytes ?? 0} bytes`,
+        ended: new Date(item.updatedAt * 1000).toLocaleString(),
+        status: "Present",
+        cloudPath:`${cloudPath}${item.host}`
+      };
+    });
+  }
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await getTransferredWithHosts();
-        setTransfers(data);
-        //console.log(data);
-      } catch (err) {
-        console.error("Failed to load transfers", err);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    if (transfers.length === 0) return;
-
-    loadHosts();
-  }, [transfers]);
-
-  useEffect(() => {
-    getTransferPolicies()
-      .then(res => {
-        if (res && Object.keys(res).length) {
-          setDataTransfer(res);
-        }
+    getCloudTransfers()
+      .then(data => {
+        const bound = bindHostData(data);          // host + stats
+        const rows = toRecentTransferRows(bound); // flat rows
+        setCloudTransfers(rows);
       })
-      .catch(err => {
-        console.error("Failed to load transfer policies", err);
-      });
-  }, []);
+      .catch(console.error);
+  }, [afterRefresh]);
+
   const handleClick = async (selectedHost) => {
     if (!selectedHost) {
       alert("Please select a host");
@@ -251,9 +262,9 @@ const CloudBackups = () => {
             <thead>
               <tr>
                 <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Provider</th>
+                {/* <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Host</th> */}
                 <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Host</th>
-                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Host IP</th>
-                <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Type</th>
+                {/* <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Type</th> */}
                 <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Date</th>
                 <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Size</th>
                 <th style={{ ...thtd, color: 'black', fontWeight: 600 }}>Status</th>
@@ -262,17 +273,17 @@ const CloudBackups = () => {
               </tr>
             </thead>
             <tbody>
-              {backups.map(row => (
+              {cloudTransfers.map(row => (
                 <tr key={row.host + row.backupId}>
                   <td style={thtd}>
                     <span style={{ color: providerColor(row.provider), fontWeight: 600 }}>
                       {row.provider}
                     </span>
                   </td>
+                  {/* <td style={thtd}>{row.hostname}</td> */}
                   <td style={thtd}>{row.host}</td>
-                  <td style={thtd}>{row.backupId}</td>
-                  <td style={thtd}>{row.type}</td>
-                  <td style={thtd}>{row.date}</td>
+                  {/* <td style={thtd}>{row.type}</td> */}
+                  <td style={thtd}>{row.ended}</td>
                   <td style={thtd}>{row.size}</td>
                   <td style={thtd}>
                     <span style={{ color: badgeColor(row.status), fontWeight: 600 }}>
@@ -290,8 +301,8 @@ const CloudBackups = () => {
 
                   <td style={thtd}>
                     <button
-                      onClick={() => handleClick(row.backupId)}
-                      disabled={!row.backupId || syncing}
+                      onClick={() => handleClick(row.host)}
+                      disabled={!row.host || syncing}
                       style={{
                         padding: '7px 10px',
                         borderRadius: 8,
