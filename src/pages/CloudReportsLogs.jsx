@@ -2,6 +2,7 @@ import styles from './Reports.module.css'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchLog, deleteRcloneLog } from '../services/api'
+import jsPDF from "jspdf";
 
 const card = {
   padding: '14px 16px',
@@ -46,6 +47,8 @@ const statusColor = (status) => {
   return '#374151'
 }
 
+
+
 const CloudReportsLogs = () => {
   const [logContent, setLogContent] = useState({ content: "" });
 
@@ -59,7 +62,35 @@ const CloudReportsLogs = () => {
         console.error("Error fetching log:", err);
       });
   }, []);
+const handleDownloadLogs = () => {
+  if (!logContent?.content) {
+    alert("No logs available to download");
+    return;
+  }
 
+  const doc = new jsPDF();
+
+  // Format date: DD-MM-YYYY
+  const today = new Date();
+  const printDate = today.toLocaleDateString("en-GB").replace(/\//g, "-");
+
+  // Title
+  doc.setFontSize(12);
+  doc.text(`Print On: ${printDate}`, 10, 10);
+
+  // Log content
+  doc.setFontSize(10);
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const textLines = doc.splitTextToSize(
+    logContent.content,
+    pageWidth - 20
+  );
+
+  doc.text(textLines, 10, 20);
+
+  // Save PDF
+  doc.save(`cloud-logs-${printDate}.pdf`);
+};
   const handleDeleteLog = async () => {
   try {
     const res = await deleteRcloneLog();
@@ -77,31 +108,58 @@ const CloudReportsLogs = () => {
   return (
     <div>
       {/* <h1>Cloud Reports & Logs</h1> */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Cloud Reports & Logs</h1>
+  <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+  <h1>Cloud Reports & Logs</h1>
 
-        <button
-          onClick={() => {
-            if (window.confirm("Are you sure you want to permanently clear reports & logs?")) {
-              //setLogContent({ content: "" });
-              handleDeleteLog();
-            }
-          }}
-          style={{
-            padding: '8px 12px',
-            borderRadius: 8,
-            border: '1px solid #dc2626',
-            background: '#fee2e2',
-            color: '#b91c1c',
-            cursor: 'pointer',
-            fontWeight: 600
-          }}
-        >
-          Clear Logs
-        </button>
-      </div>
+  <div style={{ display: "flex", gap: "10px" }}>
+    <button
+      onClick={handleDownloadLogs}
+      style={{
+        padding: "8px 12px",
+        borderRadius: 8,
+        border: "1px solid #0284c7",
+        background: "#e0f2fe", // sky blue
+        color: "#0369a1",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      Download Logs
+    </button>
 
-      <section style={{ marginTop: 14 }}>
+    <button
+      onClick={() => {
+        if (
+          window.confirm(
+            "Are you sure you want to permanently clear reports & logs?"
+          )
+        ) {
+          handleDeleteLog();
+        }
+      }}
+      style={{
+        padding: "8px 12px",
+        borderRadius: 8,
+        border: "1px solid #dc2626",
+        background: "#fee2e2",
+        color: "#b91c1c",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      Clear Logs
+    </button>
+  </div>
+</div>
+
+
+      {/* <section style={{ marginTop: 14 }}>
         <h2>Filters</h2>
         <div style={card}>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -128,11 +186,11 @@ const CloudReportsLogs = () => {
               Apply
             </button>
           </div>
-          {/* <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
+          <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
             Filters are UI-only; hook to backend logs later.
-          </div> */}
+          </div>
         </div>
-      </section>
+      </section> */}
 
       <section style={{ marginTop: 16 }}>
         <textarea
