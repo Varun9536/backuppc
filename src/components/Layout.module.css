@@ -119,7 +119,7 @@ body {
 
 
 .sidebarSectionTitle {
-  margin-top: 18px;
+  margin-top: 5px;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -216,3 +216,13 @@ body {
   }
 }
 
+.cloudHeader {
+  cursor: pointer;
+  padding: 10px 12px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cloudHeader:hover {
+  background-color: #87ceeb; /* SkyBlue */
+  color: #ffffff;
+}

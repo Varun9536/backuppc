@@ -16,6 +16,7 @@ const Layout = () => {
   const { role } = useSelector((state) => state.user)
 
   const [showHelp, setShowHelp] = useState(false)
+  const [showHelp1, setShowHelp1] = useState(false)
 
   const handleLogout = () => {
     dispatch(logout())
@@ -71,17 +72,46 @@ const Layout = () => {
           </div>
         </div>
 
-        <div style={{display:'flex',gap:"0px 10px"}}>
-          {/* {role === userRoles.level2 && (
-            <div onClick={handleHelp} className={styles.userBadgeHelp}>
-              {showHelp ? "Close Help" : "Help"}
-            </div>
-          )} */}
+        <div style={{ display: "flex", gap: "0px 10px" }}>
 
+          {/* HELP */}
+          <div
+            onClick={() => setShowHelp1(!showHelp1)}
+            className={styles.userBadgeHelp}
+            style={{ cursor: "pointer" }}
+          >
+            Help
+          </div>
+
+          {/* USER GUIDE DOWNLOAD (shown when Help clicked) */}
+          {showHelp1 && (
+            <a
+              href="/assets/user-guide.pdf"
+              download="User_Guide.pdf"
+              className={styles.sidebarLink}
+            >
+              <span className={styles.sidebarLinkIcon}>📄</span>
+              <span className={styles.sidebarLinkLabel}>User Guide</span>
+            </a>
+          )}
+
+          {/* LOGOUT */}
           <div onClick={handleLogout} className={styles.userBadge}>
             Logout
           </div>
         </div>
+
+        {/* <div style={{ display: 'flex', gap: "0px 10px" }}>
+         * {role === userRoles.level2 && (
+            <div onClick={handleHelp} className={styles.userBadgeHelp}>
+              {showHelp ? "Close Help" : "Help"}
+            </div>
+          )} 
+
+           <div onClick={handleLogout} className={styles.userBadge}>
+            Logout
+          </div> 
+        </div> */}
 
       </header>
 

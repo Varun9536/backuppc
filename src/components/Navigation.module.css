@@ -72,5 +72,19 @@
   .navLink {
     width: 100%;
   }
+  .cloudHeader {
+  cursor: pointer;
+  padding: 10px 12px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
+
+.cloudHeader:hover {
+  background-color: #2a2f3a; /* adjust to your theme */
+  color: #ffffff;
+}
+
+}
+
+
+
 

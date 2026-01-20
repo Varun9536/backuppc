@@ -37,12 +37,12 @@ const Home = () => {
       description: 'Audit history, analyze outcomes and spot issues.',
       icon: '📊'
     },
-    {
-      path: '/notifications',
-      label: 'Notifications',
-      description: 'Reminder cadence, email templates and routing.',
-      icon: '✉'
-    }
+    // {
+    //   path: '/notifications',
+    //   label: 'Notifications',
+    //   description: 'Reminder cadence, email templates and routing.',
+    //   icon: '✉'
+    // }
   ]
 
 
