@@ -77,6 +77,7 @@ const CloudSettings = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingProvider, setEditingProvider] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadProviders();
@@ -180,13 +181,23 @@ const CloudSettings = () => {
     setIsEdit(true);
   };
 
+  useEffect(() => {
+    loadProviders();
+  }, []);
+
+
   async function loadProviders() {
     try {
+      setLoading(true);
       const data = await getProviders();
       setProvidersList(data);
     } catch (err) {
       console.error(err);
     }
+    finally {
+      setLoading(false);             // stop loader
+    }
+
   }
   const handleClear = async () => {
     await loadProviders(); // reload table data
@@ -271,7 +282,7 @@ const CloudSettings = () => {
             }}
           >
             <thead>
-              <tr>             
+              <tr>
                 <th style={th}>Provider</th>
                 <th style={th}>Name</th>
                 <th style={th}>Bucket / Container</th>
@@ -281,54 +292,60 @@ const CloudSettings = () => {
               </tr>
             </thead>
             <tbody>
-              {providersList.map((p) => (
-                <tr
-                  key={p.name}
-                  style={{
-                    backgroundColor:
-                      editingProvider === p.name ? "#dbeafe" : "transparent", // light blue
-                    boxShadow:
-                      editingProvider === p.name
-                        ? "0 0 0 1px #60a5fa inset"
-                        : "none",
-                    transition: "0.2s",
-                  }}
-                >
-                  <td style={td}>{p.type}</td>
-                  <td style={td}>{p.name}</td>               
-                  <td style={td}>{p.bucket}</td>
-                  <td style={td}>{p.region}</td>
-                  <td
-                    style={{
-                      ...td,
-                      color: p.status === "Healthy" ? "#16a34a" : "#dc2626",
-                      fontWeight: 600,
-                    }}
-
-                  >
-                    {p.status}
-                  </td>
-                  <td style={td}>
-                    <button
-                      style={{
-                        padding: "4px 8px",
-                        borderRadius: 6,
-                        border: "1px solid #d1d5db",
-                        cursor: "pointer",
-                        background:
-                          editingProvider === p.name ? "#93c5fd" : "#fef3c7",
-                      }}
-                      onClick={() => handleEdit(p)}
-                    >
-                      Edit
-                    </button>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", padding: 16 }}>
+                    Loading Provider Details…
                   </td>
                 </tr>
-              ))}
+              ) : providersList.length > 0 ? (
+                providersList.map((p) => (
+                  <tr
+                    key={p.name}
+                    style={{
+                      backgroundColor:
+                        editingProvider === p.name ? "#dbeafe" : "transparent",
+                      boxShadow:
+                        editingProvider === p.name
+                          ? "0 0 0 1px #60a5fa inset"
+                          : "none",
+                      transition: "0.2s",
+                    }}
+                  >
+                    <td style={td}>{p.type}</td>
+                    <td style={td}>{p.name}</td>
+                    <td style={td}>{p.bucket}</td>
+                    <td style={td}>{p.region}</td>
 
-              {providersList.length === 0 && (
+                    <td
+                      style={{
+                        ...td,
+                        color: p.status === "Healthy" ? "#16a34a" : "#6b7280",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {p.status}
+                    </td>
+                    <td style={td}>
+                      <button
+                        style={{
+                          padding: "4px 8px",
+                          borderRadius: 6,
+                          border: "1px solid #d1d5db",
+                          cursor: "pointer",
+                          background:
+                            editingProvider === p.name ? "#93c5fd" : "#fef3c7",
+                        }}
+                        onClick={() => handleEdit(p)}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
-                  <td colSpan={5} style={{ ...td, textAlign: "center" }}>
+                  <td colSpan={6} style={{ textAlign: "center", padding: 16 }}>
                     No providers configured
                   </td>
                 </tr>
@@ -362,6 +379,17 @@ const CloudSettings = () => {
               </select>
             </label>
 
+             <label style={label}>
+              Name
+              <input
+                style={input}
+                value={form.bucketName}
+                onChange={(e) =>
+                  setForm({ ...form, bucketName: e.target.value })
+                }
+              />
+            </label>
+
             <label style={label}>
               Bucket / Container
               <input
@@ -372,6 +400,7 @@ const CloudSettings = () => {
                 }
               />
             </label>
+
 
             <label style={label}>
               Region / Endpoint
