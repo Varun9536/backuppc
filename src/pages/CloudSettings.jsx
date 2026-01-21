@@ -242,8 +242,7 @@ const CloudSettings = () => {
     try {
       await updateProvider(editingProvider, form);
       alert("Provider update successfully");
-      setIsEdit(false);
-      setEditingProvider(null);
+      handleClear();
       loadProviders();
 
     } catch (err) {
@@ -285,7 +284,7 @@ const CloudSettings = () => {
               <tr>
                 <th style={th}>Provider</th>
                 <th style={th}>Name</th>
-                <th style={th}>Bucket / Container</th>
+                {/* <th style={th}>Bucket / Container</th> */}
                 <th style={th}>Region / Endpoint</th>
                 <th style={th}>Status</th>
                 <th style={th}>Actions</th>
@@ -313,8 +312,8 @@ const CloudSettings = () => {
                     }}
                   >
                     <td style={td}>{p.type}</td>
-                    <td style={td}>{p.name}</td>
                     <td style={td}>{p.bucket}</td>
+                    {/* <td style={td}>{p.bucket}</td> */}
                     <td style={td}>{p.region}</td>
 
                     <td
@@ -379,7 +378,7 @@ const CloudSettings = () => {
               </select>
             </label>
 
-             <label style={label}>
+             {/* <label style={label}>
               Name
               <input
                 style={input}
@@ -388,10 +387,10 @@ const CloudSettings = () => {
                   setForm({ ...form, bucketName: e.target.value })
                 }
               />
-            </label>
+            </label> */}
 
             <label style={label}>
-              Bucket / Container
+              Name
               <input
                 style={input}
                 value={form.bucketName}
