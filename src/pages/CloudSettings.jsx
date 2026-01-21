@@ -271,9 +271,9 @@ const CloudSettings = () => {
             }}
           >
             <thead>
-              <tr>
+              <tr>             
+                <th style={th}>Provider</th>
                 <th style={th}>Name</th>
-                <th style={th}>Type</th>
                 <th style={th}>Bucket / Container</th>
                 <th style={th}>Region / Endpoint</th>
                 <th style={th}>Status</th>
@@ -294,8 +294,8 @@ const CloudSettings = () => {
                     transition: "0.2s",
                   }}
                 >
-                  <td style={td}>{p.name}</td>
                   <td style={td}>{p.type}</td>
+                  <td style={td}>{p.name}</td>               
                   <td style={td}>{p.bucket}</td>
                   <td style={td}>{p.region}</td>
                   <td
