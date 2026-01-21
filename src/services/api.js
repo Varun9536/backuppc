@@ -3,7 +3,7 @@
 //const BASE_URL = 'http://192.168.1.37:8081';
 
 const BASE_URL = "https://both-rainbow-question-toronto.trycloudflare.com";
-const BASE_URL_CLOUD = "https://examined-themes-strike-get.trycloudflare.com"//"http://127.0.0.1:8082";
+const BASE_URL_CLOUD = "https://reflects-notifications-erik-visitors.trycloudflare.com"//"http://127.0.0.1:8082";
 const BASE_URL_LOG = "https://reflected-represent-dosage-rabbit.trycloudflare.com"//"http://127.0.0.1:8085";
 const BASE_URL_READLOG = "https://income-touched-directory-partners.trycloudflare.com"//"http://127.0.0.1:3000";
 const BASE_URL_PERMISSION = "https://fingers-producing-unix-representations.trycloudflare.com"//"http://127.0.0.1:8084";
