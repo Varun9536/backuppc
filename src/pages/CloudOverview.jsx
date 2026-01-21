@@ -62,7 +62,7 @@ const statusColor = (status) => {
       return '#16a34a'
     case 'Queued':
       return '#eab308'
-    case 'Failed':
+    case 'Unhealthy':
       return '#dc2626'
     default:
       return '#374151'
@@ -188,14 +188,14 @@ const CloudOverview = () => {
       <section style={{ marginTop: 18 }}>
         <h2>Active Providers</h2>
         <div style={grid}>
-          {providerCards.map(p => (
+          {providersList.map(p => (
             <div key={p.name} style={card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{p.name}</div>
                 {badge(p.status, statusColor(p.status))}
               </div>
               <div style={{ marginTop: 6, fontSize: 13, color: '#374151' }}>
-                Bucket/Container: <strong>{p.bucket}</strong>
+                Bucket/Container: <strong>{p.type}</strong>
               </div>
               {/* <div style={{ marginTop: 4, fontSize: 13, color: '#6b7280' }}>
                 Region: {p.region} • Storage: {p.storage}
@@ -221,7 +221,7 @@ const CloudOverview = () => {
               </tr>
             </thead>
             <tbody>
-              {providerChecks.map(row => (
+              {providersList.map(row => (
                 <tr key={row.name}>
                   <td style={thtd}>{row.name}</td>
                   <td style={thtd}>
