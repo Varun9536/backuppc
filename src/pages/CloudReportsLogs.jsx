@@ -63,7 +63,6 @@ const CloudReportsLogs = () => {
       });
   }, []);
 
-
   const handleDownloadLogs = () => {
     if (!logContent?.content) {
       alert("No logs available to download");
@@ -88,31 +87,50 @@ const CloudReportsLogs = () => {
       .replace(",", "");
 
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-    // Page name (top-left)
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("Cloud Reports & Logs", 10, 10);
+    const margin = 10;
+    const headerHeight = 15;
+    const lineHeight = 6;
 
-    // Print date & time (top-right)
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Printed On: ${printDateTime}`, pageWidth - 10, 10, {
-      align: "right",
-    });
+    // Helper: draw header on each page
+    const drawHeader = () => {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Cloud-Reports & Logs", margin, 10);
 
-    // Log content
-    doc.setFontSize(10);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Printed On: ${printDateTime}`, pageWidth - margin, 10, {
+        align: "right",
+      });
+    };
+
+    drawHeader();
+
+    // Split text
     const textLines = doc.splitTextToSize(
       logContent.content,
-      pageWidth - 20
+      pageWidth - margin * 2
     );
 
-    doc.text(textLines, 10, 20);
+    let y = headerHeight;
+
+    textLines.forEach((line) => {
+      if (y + lineHeight > pageHeight - margin) {
+        doc.addPage();
+        drawHeader();
+        y = headerHeight;
+      }
+
+      doc.text(line, margin, y);
+      y += lineHeight;
+    });
 
     // Save PDF
     doc.save(`Cloud-Reports & Logs-${printDateTime.replace(/:/g, "-")}.pdf`);
   };
+
 
   const handleDeleteLog = async () => {
     try {

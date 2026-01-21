@@ -36,55 +36,74 @@ const Reports = () => {
     }
   }, [logType])
 
-const handleDownloadLogs = () => {
-  if (!logContent?.content) {
-    alert("No logs available to download");
-    return;
-  }
+  const handleDownloadLogs = () => {
+    if (!logContent?.content) {
+      alert("No logs available to download");
+      return;
+    }
 
-  const doc = new jsPDF();
+    const doc = new jsPDF();
 
-  // Date & Time: DD-MM-YYYY HH:mm:ss
-  const now = new Date();
-  const printDateTime = now
-    .toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    })
-    .replace(/\//g, "-")
-    .replace(",", "");
+    // Date & Time: DD-MM-YYYY HH:mm:ss
+    const now = new Date();
+    const printDateTime = now
+      .toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })
+      .replace(/\//g, "-")
+      .replace(",", "");
 
-  const pageWidth = doc.internal.pageSize.getWidth();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-  // Page name (top-left)
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("Reports & Logs", 10, 10);
+    const margin = 10;
+    const headerHeight = 15;
+    const lineHeight = 6;
 
-  // Print date & time (top-right)
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Printed On: ${printDateTime}`, pageWidth - 10, 10, {
-    align: "right",
-  });
+    // Helper: draw header on each page
+    const drawHeader = () => {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Reports & Logs", margin, 10);
 
-  // Log content
-  doc.setFontSize(10);
-  const textLines = doc.splitTextToSize(
-    logContent.content,
-    pageWidth - 20
-  );
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Printed On: ${printDateTime}`, pageWidth - margin, 10, {
+        align: "right",
+      });
+    };
 
-  doc.text(textLines, 10, 20);
+    drawHeader();
 
-  // Save PDF
-  doc.save(`Reports & Logs-${printDateTime.replace(/:/g, "-")}.pdf`);
-};
+    // Split text
+    const textLines = doc.splitTextToSize(
+      logContent.content,
+      pageWidth - margin * 2
+    );
+
+    let y = headerHeight;
+
+    textLines.forEach((line) => {
+      if (y + lineHeight > pageHeight - margin) {
+        doc.addPage();
+        drawHeader();
+        y = headerHeight;
+      }
+
+      doc.text(line, margin, y);
+      y += lineHeight;
+    });
+
+    // Save PDF
+    doc.save(`Reports_Logs-${printDateTime.replace(/:/g, "-")}.pdf`);
+  };
+
 
   // const loadLogDates = async () => {
   //   try {

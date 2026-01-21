@@ -78,9 +78,15 @@ const Layout = () => {
           <div
             onClick={() => setShowHelp1(!showHelp1)}
             className={styles.userBadgeHelp}
-            style={{ cursor: "pointer" }}
+
+            style={{
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            Help
+            {showHelp1 ? "Close Help" : "Help"}
           </div>
 
           {/* USER GUIDE DOWNLOAD (shown when Help clicked) */}

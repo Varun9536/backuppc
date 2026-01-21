@@ -200,7 +200,7 @@ const CloudSettings = () => {
 
   }
   const handleClear = async () => {
-    await loadProviders(); // reload table data
+   // await loadProviders(); // reload table data
 
     setForm({
       provider: "Select Provider",
