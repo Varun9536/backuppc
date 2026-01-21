@@ -36,34 +36,56 @@ const Reports = () => {
     }
   }, [logType])
 
-  const handleDownloadLogs = () => {
-    if (!logContent?.content) {
-      alert("No logs available to download");
-      return;
-    }
-    const doc = new jsPDF();
+const handleDownloadLogs = () => {
+  if (!logContent?.content) {
+    alert("No logs available to download");
+    return;
+  }
 
-    // Format date: DD-MM-YYYY
-    const today = new Date();
-    const printDate = today.toLocaleDateString("en-GB").replace(/\//g, "-");
+  const doc = new jsPDF();
 
-    // Title
-    doc.setFontSize(12);
-    doc.text(`Print On: ${printDate}`, 10, 10);
+  // Date & Time: DD-MM-YYYY HH:mm:ss
+  const now = new Date();
+  const printDateTime = now
+    .toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    })
+    .replace(/\//g, "-")
+    .replace(",", "");
 
-    // Log content
-    doc.setFontSize(10);
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const textLines = doc.splitTextToSize(
-      logContent.content,
-      pageWidth - 20
-    );
+  const pageWidth = doc.internal.pageSize.getWidth();
 
-    doc.text(textLines, 10, 20);
+  // Page name (top-left)
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Reports & Logs", 10, 10);
 
-    // Save PDF
-    doc.save(`cloud-logs-${printDate}.pdf`);
-  };
+  // Print date & time (top-right)
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Printed On: ${printDateTime}`, pageWidth - 10, 10, {
+    align: "right",
+  });
+
+  // Log content
+  doc.setFontSize(10);
+  const textLines = doc.splitTextToSize(
+    logContent.content,
+    pageWidth - 20
+  );
+
+  doc.text(textLines, 10, 20);
+
+  // Save PDF
+  doc.save(`Reports & Logs-${printDateTime.replace(/:/g, "-")}.pdf`);
+};
+
   // const loadLogDates = async () => {
   //   try {
   //     setLoading(true)

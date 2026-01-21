@@ -62,101 +62,124 @@ const CloudReportsLogs = () => {
         console.error("Error fetching log:", err);
       });
   }, []);
-const handleDownloadLogs = () => {
-  if (!logContent?.content) {
-    alert("No logs available to download");
-    return;
-  }
 
-  const doc = new jsPDF();
 
-  // Format date: DD-MM-YYYY
-  const today = new Date();
-  const printDate = today.toLocaleDateString("en-GB").replace(/\//g, "-");
+  const handleDownloadLogs = () => {
+    if (!logContent?.content) {
+      alert("No logs available to download");
+      return;
+    }
 
-  // Title
-  doc.setFontSize(12);
-  doc.text(`Print On: ${printDate}`, 10, 10);
+    const doc = new jsPDF();
 
-  // Log content
-  doc.setFontSize(10);
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const textLines = doc.splitTextToSize(
-    logContent.content,
-    pageWidth - 20
-  );
-
-  doc.text(textLines, 10, 20);
-
-  // Save PDF
-  doc.save(`cloud-logs-${printDate}.pdf`);
-};
-  const handleDeleteLog = async () => {
-  try {
-    const res = await deleteRcloneLog();
-    alert(res.message);
-    fetchLog()
-      .then((data) => {
-        // bind fetched text into state
-        setLogContent({ content: data });
+    // Date & Time: DD-MM-YYYY HH:mm:ss
+    const now = new Date();
+    const printDateTime = now
+      .toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
       })
-  } catch (err) {
-    alert(err.message);
-  }
-};
+      .replace(/\//g, "-")
+      .replace(",", "");
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Page name (top-left)
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Cloud Reports & Logs", 10, 10);
+
+    // Print date & time (top-right)
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Printed On: ${printDateTime}`, pageWidth - 10, 10, {
+      align: "right",
+    });
+
+    // Log content
+    doc.setFontSize(10);
+    const textLines = doc.splitTextToSize(
+      logContent.content,
+      pageWidth - 20
+    );
+
+    doc.text(textLines, 10, 20);
+
+    // Save PDF
+    doc.save(`Cloud-Reports & Logs-${printDateTime.replace(/:/g, "-")}.pdf`);
+  };
+
+  const handleDeleteLog = async () => {
+    try {
+      const res = await deleteRcloneLog();
+      alert(res.message);
+      fetchLog()
+        .then((data) => {
+          // bind fetched text into state
+          setLogContent({ content: data });
+        })
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div>
       {/* <h1>Cloud Reports & Logs</h1> */}
-  <div
-  style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }}
->
-  <h1>Cloud Reports & Logs</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h1>Cloud Reports & Logs</h1>
 
-  <div style={{ display: "flex", gap: "10px" }}>
-    <button
-      onClick={handleDownloadLogs}
-      style={{
-        padding: "8px 12px",
-        borderRadius: 8,
-        border: "1px solid #0284c7",
-        background: "#e0f2fe", // sky blue
-        color: "#0369a1",
-        cursor: "pointer",
-        fontWeight: 600,
-      }}
-    >
-      Download Logs
-    </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={handleDownloadLogs}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #0284c7",
+              background: "#e0f2fe", // sky blue
+              color: "#0369a1",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            Download Logs
+          </button>
 
-    <button
-      onClick={() => {
-        if (
-          window.confirm(
-            "Are you sure you want to permanently clear reports & logs?"
-          )
-        ) {
-          handleDeleteLog();
-        }
-      }}
-      style={{
-        padding: "8px 12px",
-        borderRadius: 8,
-        border: "1px solid #dc2626",
-        background: "#fee2e2",
-        color: "#b91c1c",
-        cursor: "pointer",
-        fontWeight: 600,
-      }}
-    >
-      Clear Logs
-    </button>
-  </div>
-</div>
+          <button
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Are you sure you want to permanently clear reports & logs?"
+                )
+              ) {
+                handleDeleteLog();
+              }
+            }}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #dc2626",
+              background: "#fee2e2",
+              color: "#b91c1c",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            Clear Logs
+          </button>
+        </div>
+      </div>
 
 
       {/* <section style={{ marginTop: 14 }}>
