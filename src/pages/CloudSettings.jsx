@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import { getProviders, saveProvider, updateProvider, getSchedularDetails, saveSchedule, getTransferPolicies, saveTransferPolicies } from '../services/api';
+import layoutStyles from "../components/Layout.module.css";
+
+
+
+
+
 
 const card = {
   padding: '14px 16px',
@@ -30,6 +36,15 @@ const inputStyle = {
   outline: 'none',
   boxSizing: 'border-box'
 };
+const iconBtnStyle = {
+  padding: "4px",
+  borderRadius: 6,
+  border: "1px solid #d1d5db",
+  background: "#f9fafb",
+  cursor: "pointer",
+};
+
+
 
 const label = { display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, color: '#374151' }
 const input = { padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14 }
@@ -200,7 +215,7 @@ const CloudSettings = () => {
 
   }
   const handleClear = async () => {
-   // await loadProviders(); // reload table data
+    // await loadProviders(); // reload table data
 
     setForm({
       provider: "Select Provider",
@@ -325,7 +340,7 @@ const CloudSettings = () => {
                     >
                       {p.status}
                     </td>
-                    <td style={td}>
+                    {/* <td style={td}>
                       <button
                         style={{
                           padding: "4px 8px",
@@ -339,7 +354,37 @@ const CloudSettings = () => {
                       >
                         Edit
                       </button>
+                    </td> */}
+                    <td style={td}>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        {/* Edit */}
+                        <button
+                          onClick={() => handleEdit(p)}
+                          className={layoutStyles.iconBtn}
+                          title="Edit"
+                        >
+                          <img src="/assets/edit.ico" alt="Edit" width={16} height={16} />
+                        </button>
+
+                        {/* Delete */}
+                        <button
+                          onClick={() => {
+                            if (window.confirm("Are you sure you want to delete this provider?")) {
+                              handleDelete(p);
+                            }
+                          }}
+                          className={layoutStyles.iconBtn}
+                          title="Delete"
+                        >
+                          <img src="/assets/delete.ico" alt="Delete" width={16} height={16} />
+                        </button>
+                      </div>
                     </td>
+
+
+
+
+
                   </tr>
                 ))
               ) : (
@@ -378,7 +423,7 @@ const CloudSettings = () => {
               </select>
             </label>
 
-             {/* <label style={label}>
+            {/* <label style={label}>
               Name
               <input
                 style={input}
