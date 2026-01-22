@@ -319,7 +319,7 @@ const CloudSettings = () => {
                     <td
                       style={{
                         ...td,
-                        color: p.status === "Healthy" ? "#16a34a" : "#6b7280",
+                        color: p.status === "Healthy" ? "#16a34a" : "#dc2626",
                         fontWeight: 600,
                       }}
                     >
