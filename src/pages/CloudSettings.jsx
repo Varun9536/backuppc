@@ -179,25 +179,25 @@ const CloudSettings = () => {
     s3_compatible: "S3_COMPAT",
   };
 
-  function handleEdit(p) {   
+  function handleEdit(p) {
     let providerValue = '';
-  switch (p.provider.toLowerCase()) {
-    case 'aws s3':
-    case 's3':
-      providerValue = 's3';
-      break;
-    case 'azure blob':
-    case 'azureblob':
-      providerValue = 'azureblob';
-      break;
-    case 'gdrive':
-    case 'drive':
-    case 'google drive':
-      providerValue = 'drive';
-      break;
-    default:
-      providerValue = '';
-  }
+    switch (p.provider.toLowerCase()) {
+      case 'aws s3':
+      case 's3':
+        providerValue = 's3';
+        break;
+      case 'azure blob':
+      case 'azureblob':
+        providerValue = 'azureblob';
+        break;
+      case 'gdrive':
+      case 'drive':
+      case 'google drive':
+        providerValue = 'drive';
+        break;
+      default:
+        providerValue = '';
+    }
     setForm({
       provider: providerValue,
       instanceName: p.name,
@@ -215,7 +215,7 @@ const CloudSettings = () => {
 
   function resetForm() {
     setForm({
-      providerType: "",
+      provider: "",
       instanceName: "",
       region: "",
       accessKey: "",
@@ -268,6 +268,7 @@ const CloudSettings = () => {
     try {
       await updateProvider(editingProvider, form);
       alert("Provider updated successfully");
+      setIsEdit(false);
       resetForm();
       loadProviders();
     } catch (e) {
@@ -426,7 +427,7 @@ const CloudSettings = () => {
                 <option value="drive">Google Drive</option>
               </select>
             </label>
-
+            {/* 
             <label style={label}>
               Instance Name
               <input
@@ -436,7 +437,24 @@ const CloudSettings = () => {
                   setForm({ ...form, instanceName: e.target.value })
                 }
               />
+            </label> */}
+
+            <label style={label}>
+              Instance Name
+              <input
+                style={{
+                  ...input,
+                  backgroundColor: isEdit ? "#f3f4f6" : "white",
+                  cursor: isEdit ? "not-allowed" : "text",
+                }}
+                value={form.instanceName}
+                readOnly={isEdit}
+                onChange={(e) =>
+                  setForm({ ...form, instanceName: e.target.value })
+                }
+              />
             </label>
+
 
             <label style={label}>
               Region / Endpoint

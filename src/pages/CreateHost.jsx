@@ -66,8 +66,8 @@ const CreateHost = () => {
         alert(data?.error);
       }
 
-      //   refreshHosts()
-      //   navigate('/hosts')
+        refreshHosts()
+        navigate('/hosts')
     } catch (error) {
       console.error('Error saving host:', error)
       alert('Failed to save host configuration')

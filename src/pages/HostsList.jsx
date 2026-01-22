@@ -58,12 +58,21 @@ const HostsList = () => {
   return (
     <div className={styles.container}>
       <h1>Hosts List</h1>
-      <button
-        className={styles.addButton}
-        onClick={() => navigate('/hosts/createHost')}
-      >
-        + Add New Host
-      </button>
+      <div className={styles.buttonBar}>
+        <button
+          className={styles.addButton}
+          onClick={() => navigate("/hosts/createHost")}
+        >
+          + Add New Host
+        </button>
+
+        <button
+          onClick={() => navigate("/")}
+          className={styles.backButton}
+        >
+          ← Back to Home
+        </button>
+      </div>
 
       {loading ? (
         <div>Loading...</div>
@@ -94,7 +103,7 @@ const HostsList = () => {
                     <div style={{ display: "flex", gap: 8 }}>
                       {/* Edit */}
                       <button
-                         className={layoutStyles.iconBtn}
+                        className={layoutStyles.iconBtn}
                         onClick={() => handleEdit(host.hostname)}
                         title="Edit"
                       >
@@ -110,11 +119,7 @@ const HostsList = () => {
                       <button
                         className={layoutStyles.iconBtn}
                         onClick={() => {
-                          if (
-                            window.confirm(
-                              "Are you sure you want to delete this host?"
-                            )
-                          ) {
+                          {
                             handleDelete(host.hostname);
                           }
                         }}

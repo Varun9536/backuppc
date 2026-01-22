@@ -9,6 +9,7 @@ import isynclogin from "../assets/Login.png";
 import threeImages from "../assets/Image.png"
 import cloudlogo from "../assets/Logo.svg"
 
+
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ function Login() {
   const [userid, setuserid] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   // userid regex for validation
   //   const useridRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -105,7 +107,7 @@ function Login() {
       </div>
 
 
-      <div className={styles.loginBox}>    
+      <div className={styles.loginBox}>
         <h2 className={styles.title}>Login</h2>
         <form onSubmit={handleLogin}>
           <div className={styles.inputGroup}>
@@ -120,13 +122,32 @@ function Login() {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-            />
+            <div className={styles.passwordWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className={styles.passwordInput}
+              />
+
+              <button
+                type="button"
+                className={styles.eyeButton}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <img
+                  src={
+                    showPassword
+                      ? "/assets/show.png"
+                      : "/assets/eye.png"
+                  }
+                  alt="Toggle password"
+                />
+              </button>
+            </div>
+
+
             {errors.password && <span className={styles.error}>{errors.password}</span>}
           </div>
 

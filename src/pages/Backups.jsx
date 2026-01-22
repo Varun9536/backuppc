@@ -110,7 +110,17 @@ const Backups = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Backup Management</h1>
+      
+      <div className={styles.buttonBar}>
+        <h1>Backup Management</h1>
+
+        <button
+          onClick={() => navigate("/")}
+          className={styles.backButton}
+        >
+          ← Back to Home
+        </button>
+      </div>
 
       <table className={styles.table}>
         <thead>

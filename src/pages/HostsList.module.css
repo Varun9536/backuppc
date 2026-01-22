@@ -81,4 +81,10 @@
 .backButton:hover {
   background: #5a6268;
 }
+.buttonBar {
+  display: flex;
+  justify-content: space-between; /* left & right corners */
+  align-items: center;
+  margin-bottom: 16px;
+}
 
