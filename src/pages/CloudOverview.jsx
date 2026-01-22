@@ -191,7 +191,7 @@ const CloudOverview = () => {
           {providersList.map(p => (
             <div key={p.name} style={card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{p.type}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{p.provider}</div>
                 {badge(p.status, statusColor(p.status))}
               </div>
               <div style={{ marginTop: 6, fontSize: 13, color: '#374151' }}>
@@ -223,7 +223,7 @@ const CloudOverview = () => {
             <tbody>
               {providersList.map(row => (
                 <tr key={row.name}>
-                  <td style={thtd}>{row.type}</td>
+                  <td style={thtd}>{row.provider}</td>
                   <td style={thtd}>
                     <span style={{ color: statusColor(row.status), fontWeight: 600 }}>
                       {row.status}
