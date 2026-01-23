@@ -383,17 +383,17 @@ const Restore = () => {
 
   const loadHosts = async () => {
 
-   
+
     try {
       setLoading(true)
       if (role == userRoles.level1) {
         const userdata = await restoreAPI.getUserHosts({ userid })
-       
-       // console.log(userdata)
+
+        // console.log(userdata)
         setHosts(userdata.hosts)
       }
 
-      if(role == userRoles.level2) {
+      if (role == userRoles.level2) {
         const data = await restoreAPI.getHosts()
         setHosts(data || [])
       }
@@ -481,6 +481,16 @@ const Restore = () => {
   }
 
   // Toggle selecting file (checkbox)
+  // const toggleFileSelect = (filename) => {
+
+  //   let clean = filename.replace(/^\/+/, '')
+  //   clean = clean.replace(`${selectedRoot}`, '')
+
+
+  //   setSelectedFiles(prev =>
+  //     prev.includes(clean) ? prev.filter(p => p !== clean) : [...prev, clean]
+  //   )
+  // }
   const toggleFileSelect = (filename) => {
 
     let clean = filename.replace(/^\/+/, '')
@@ -515,8 +525,8 @@ const Restore = () => {
       alert('Please select at least one file or folder to restore.')
       return
     }
-
-    const confirmMsg = `Restore ${selectedFiles.length} item(s)?\nHost: ${selectedHost}\nBackup: ${selectedBackup}\nShare: ${selectedRoot}`
+   //Backup: ${selectedBackup}
+    const confirmMsg = `Restore ${selectedFiles.length} item(s)?\nHost: ${selectedHost}\nShare: ${selectedRoot}`
     if (!window.confirm(confirmMsg)) return
 
     try {
@@ -526,7 +536,7 @@ const Restore = () => {
       const res = await restoreAPI.restore(selectedHost, backup_no, payload)
       //console.log("request", res)
       if (res && res?.restoreInfo.length > 1) {
-         //alert(`Restore started! Restore ID: ${res.restoreId || res.id || 'unknown'}`)
+        //alert(`Restore started! Restore ID: ${res.restoreId || res.id || 'unknown'}`)
         // optionally clear selections
         setSelectedFiles([])
         // setrestoreInfo(res.restoreInfo)
@@ -564,6 +574,91 @@ const Restore = () => {
     setCurrentPath(parent)
     setSelectedFiles([])
   }
+  //suraj code
+
+
+  const getCleanedPath = (item) => {
+    if (!item?.path) return null;
+
+    let p = item.path;
+
+    // remove leading slashes
+    p = p.replace(/^\/+/, '');
+
+    // remove selectedRoot only at the START
+    if (selectedRoot && p.startsWith(selectedRoot)) {
+      p = p.slice(selectedRoot.length);
+    }
+
+    // normalize again
+    p = p.replace(/^\/+/, '').trim();
+
+    return p.length > 0 ? p : null;
+  };
+
+
+  const visibleItems =
+    currentPath === '/' || currentPath === ''
+      ? rootFolders
+      : insideItems;
+
+  // const allPaths = visibleItems
+  //   .filter(item => item.type === 'file')   
+  //   .map(item => getCleanedPath(item))
+  //   .filter(Boolean);                        
+
+
+
+
+  // const allSelected =
+  //   allPaths.length > 0 &&
+  //   allPaths.every(p => selectedFiles.includes(p));
+
+
+
+  // const handleSelectAll = () => {
+  //   if (allSelected) {
+  //     // remove only visible files
+  //     setSelectedFiles(prev =>
+  //       prev.filter(p => !allPaths.includes(p))
+  //     );
+  //   } else {
+  //     setSelectedFiles(prev => {
+  //       const set = new Set(prev);
+  //       allPaths.forEach(p => set.add(p));
+  //       return Array.from(set);
+  //     });
+  //   }
+  // };
+
+  const allPaths = visibleItems
+    .map(item => getCleanedPath(item))
+    .filter(Boolean);
+
+  const allSelected =
+    allPaths.length > 0 &&
+    allPaths.every(p => selectedFiles.includes(p));
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedFiles(prev =>
+        prev.filter(p => !allPaths.includes(p))
+      );
+    } else {
+      setSelectedFiles(prev => {
+        const set = new Set(prev);
+        allPaths.forEach(p => set.add(p));
+        return Array.from(set);
+      });
+    }
+  };
+
+
+  const selectedFileCount = selectedFiles.filter(
+    f => f && f.trim() !== ''
+  ).length;
+
+
 
   // Provided UI JSX
   return (
@@ -666,6 +761,17 @@ const Restore = () => {
                 </button>
               </div>
 
+              <div style={{ marginBottom: "10px", fontWeight: 600 }}>
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={handleSelectAll}
+                  style={{ marginRight: 8 }}
+                />
+                Select All
+              </div>
+
+
               {loading && currentPath !== '/' ? (
                 <div>Loading...</div>
               ) : (
@@ -674,10 +780,18 @@ const Restore = () => {
                     <li>No items found</li>
                   ) : (
                     insideItems.map((f, i) => {
-                      let cleanedPath = f.path.replace(/^\/+/, '')
+                      // let cleanedPath = f.path.replace(/^\/+/, '')
 
-                      cleanedPath = cleanedPath.replace(`${selectedRoot}`, '')
-                      const isChecked = selectedFiles.includes(cleanedPath)
+                      // cleanedPath = cleanedPath.replace(`${selectedRoot}`, '')
+                      // const isChecked = selectedFiles.includes(cleanedPath)
+                      // const cleanedPath = getCleanedPath(f);
+                      // const isChecked = selectedFiles.includes(cleanedPath);
+                      const cleanedPath = getCleanedPath(f);
+                      const isChecked = cleanedPath
+                        ? selectedFiles.includes(cleanedPath)
+                        : false;
+
+
 
                       return (
                         <li
@@ -697,23 +811,28 @@ const Restore = () => {
                           style={{ cursor: f.type === 'folder' ? 'pointer' : 'default' }}
                         >
                           {/* Checkbox for folder */}
-                          {f.type === 'folder' && (
+                          {f.type === 'folder' && cleanedPath && (
                             <input
                               type="checkbox"
                               checked={isChecked}
                               onClick={(e) => e.stopPropagation()}
-                              onChange={() => toggleFolderSelect(f.path)}
+                              // onChange={() => toggleFolderSelect(f.path)}
+                              onChange={() => toggleFolderSelect(cleanedPath)}
+
+
                               style={{ marginRight: '10px' }}
                             />
                           )}
 
                           {/* Checkbox for file */}
-                          {f.type === 'file' && (
+                          {f.type === 'file' && cleanedPath && (
                             <input
                               type="checkbox"
                               checked={isChecked}
                               onClick={(e) => e.stopPropagation()}
-                              onChange={() => toggleFileSelect(f.path)}
+                              // onChange={() => toggleFileSelect(f.path)}
+                              onChange={() => toggleFileSelect(cleanedPath)}
+
                               style={{ marginRight: '10px' }}
                             />
                           )}
@@ -733,12 +852,15 @@ const Restore = () => {
 
       {/* Restore button */}
       <div style={{ marginTop: 16 }}>
+
         <button
           onClick={handleRestoreSelected}
           className={styles.backButton}
-          disabled={loading || !selectedRoot || selectedFiles.length === 0}
+          // disabled={loading || !selectedRoot || selectedFiles.length === 0}
+          disabled={loading || !selectedRoot || selectedFileCount === 0}
         >
-          🔄 Restore Selected ({selectedFiles.length})
+
+          🔄 Restore Selected ({selectedFileCount})
         </button>
       </div>
 
