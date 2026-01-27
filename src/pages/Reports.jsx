@@ -170,10 +170,10 @@ const Reports = () => {
             onClick={() => {
               if (
                 window.confirm(
-                  "Are you sure you want to permanently clear reports & logs?"
+                  "Are you sure you want to clear reports & logs?"
                 )
               ) {
-                handleDeleteLog();
+                setLogContent({ content: "" });
               }
             }}
             style={{
